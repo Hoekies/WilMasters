@@ -6,8 +6,14 @@ import Footer from "@/components/Footer";
 const geist = Geist({ variable: "--font-geist", subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://wm2026-opal.vercel.app'),
   title: "Willemien's Masters",
   description: "Live golf score-app voor kleine groepen",
+  openGraph: {
+    title: "Willemien's Masters",
+    description: "Live golf score-app voor kleine groepen",
+    images: [{ url: '/logo-breed.png', width: 1200, height: 360 }],
+  },
 };
 
 export const viewport: Viewport = {
