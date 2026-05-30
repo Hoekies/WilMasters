@@ -110,6 +110,9 @@ export default function HomePage() {
     }
   }
 
+  const appUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  const waText = encodeURIComponent(`Speel mee met de Willemien's Masters! 🏌️⛳\n${appUrl}`);
+
   return (
     <main className="flex flex-col items-center min-h-screen px-4 py-8 sm:py-12">
       {/* Logo — geen tekst eronder */}
@@ -297,6 +300,18 @@ export default function HomePage() {
                 <span className="text-xs text-center leading-tight">Agenda</span>
               </a>
             </div>
+
+            {/* WhatsApp deel-knop */}
+            <a
+              href={`https://wa.me/?text=${waText}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-3 w-full rounded-xl py-3 font-semibold text-sm transition-opacity hover:opacity-90"
+              style={{ background: '#25D366', color: '#fff' }}
+            >
+              <span className="text-xl leading-none">📲</span>
+              <span>Deel de app via WhatsApp</span>
+            </a>
           </>
         ) : (
           <div className="card flex flex-col gap-4">
