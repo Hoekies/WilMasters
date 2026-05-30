@@ -110,7 +110,8 @@ export default function HomePage() {
     }
   }
 
-  const appUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  const [appUrl, setAppUrl] = useState('');
+  useEffect(() => { setAppUrl(window.location.origin); }, []);
   const waText = encodeURIComponent(`Speel mee met de Willemien's Masters! 🏌️⛳\n${appUrl}`);
 
   return (
