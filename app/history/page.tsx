@@ -74,19 +74,21 @@ export default function HistoryPage() {
             {c === 'alle' ? 'Alle banen' : c}
           </button>
         ))}
-        {!isAdmin && (
-          <button onClick={() => setLoginModal(true)}
-            className="flex items-center justify-center w-9 h-9 rounded-xl text-sm shrink-0"
-            style={{ background: '#243d24', border: '1px solid #3a6b3a', color: '#7fbf7f' }}
-            title="Inloggen">🔒</button>
-        )}
-        <Link
-          href="/"
-          className="flex items-center justify-center w-9 h-9 rounded-xl text-base ml-auto shrink-0 transition-colors"
-          style={{ background: '#243d24', border: '1px solid #3a6b3a' }}
-        >
-          🏠
-        </Link>
+        <div className="flex gap-2 ml-auto shrink-0">
+          {!isAdmin && (
+            <button onClick={() => setLoginModal(true)}
+              className="flex items-center justify-center w-9 h-9 rounded-xl text-sm"
+              style={{ background: '#243d24', border: '1px solid #3a6b3a', color: '#7fbf7f' }}
+              title="Inloggen">🔒</button>
+          )}
+          <Link
+            href="/"
+            className="flex items-center justify-center w-9 h-9 rounded-xl text-base transition-colors"
+            style={{ background: '#243d24', border: '1px solid #3a6b3a' }}
+          >
+            🏠
+          </Link>
+        </div>
       </div>
 
       {loading && (
