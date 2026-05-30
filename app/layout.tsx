@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Willemien's Masters",
     description: "Live golf score-app voor kleine groepen",
-    images: [{ url: '/logo-breed.png', width: 1200, height: 360 }],
+    images: [{ url: '/logo.png', width: 500, height: 500 }],
   },
 };
 
