@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://wm2026-opal.vercel.app'),
   title: "Willemien's Masters",
   description: "Live golf score-app voor kleine groepen",
+  icons: {
+    icon: [{ url: '/favicon.png', type: 'image/png' }],
+    apple: [{ url: '/favicon.png', type: 'image/png' }],
+  },
   openGraph: {
     title: "Willemien's Masters",
     description: "Live golf score-app voor kleine groepen",
