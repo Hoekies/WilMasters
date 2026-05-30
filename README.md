@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Golf z'n Loatst
 
-## Getting Started
+Live golf score-app voor kleine groepen (max 30 spelers). Geen download vereist — spelers scannen een QR-code of voeren een code in om het live leaderboard te zien.
 
-First, run the development server:
+## Features
+
+- Nieuw rondje aanmaken met spelerlijst en handicaps
+- Scores invoeren per hole (strokeplay of Stableford)
+- Real-time leaderboard via Firebase Firestore
+- Rondje delen via code of link
+
+## Lokaal draaien
 
 ```bash
+# 1. Kopieer de environment-template
+cp .env.local.example .env.local
+
+# 2. Vul je Firebase-waarden in (zie Firebase Console → Project Settings → Web app)
+# Bewerk .env.local
+
+# 3. Installeer dependencies
+npm install
+
+# 4. Start de dev-server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 in je browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Firebase instellen
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Ga naar console.firebase.google.com
+2. Maak een nieuw project aan (bijv. `golf-zn-loatst`)
+3. Voeg een **Web app** toe → kopieer de config naar `.env.local`
+4. Ga naar **Firestore Database** → Maak database aan → kies **test mode** voor nu
+5. Later: stel Firestore Security Rules in zodat lezen/schrijven beperkt is
 
-## Learn More
+## Deployen via Vercel
 
-To learn more about Next.js, take a look at the following resources:
+1. Push deze map naar een GitHub-repository
+2. Ga naar vercel.com → **Add New Project** → importeer de GitHub-repo
+3. Voeg de Firebase-omgevingsvariabelen toe onder **Environment Variables** in Vercel
+4. Klik **Deploy** — elke push naar `main` deployt automatisch
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Golfbanen toevoegen (GPS-herkenning)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Bewerk `lib/courses.ts` om je eigen golfbanen toe te voegen met coördinaten:
 
-## Deploy on Vercel
+```ts
+{
+  id: 'mijn-golfclub',
+  name: 'Mijn Golfclub',
+  lat: 52.370216,   // vind via Google Maps: rechts-klik → "Wat is hier?"
+  lng: 4.895168,
+  holes: 18,
+  radiusKm: 1.0,
+}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Structuur
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+app/                     Next.js App Router pagina's
+lib/
+  firebase.ts            Firestore verbinding
+  scoring.ts             Stableford en strokeplay berekeningen
+  courses.ts             Golfbaan GPS-data
+  types.ts               TypeScript types
+```

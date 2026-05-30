@@ -1,0 +1,28 @@
+export type ScoringSystem = 'strokeplay' | 'stableford';
+export type RoundStatus = 'active' | 'finished';
+
+export interface Player {
+  id: string;
+  name: string;
+  handicap: number;
+  scores: (number | null)[]; // index = hole-1, null = not yet played
+}
+
+export interface Round {
+  id?: string;
+  courseName: string;
+  holes: 9 | 18;
+  scoringSystem: ScoringSystem;
+  createdAt: number;
+  status: RoundStatus;
+  players: Player[];
+}
+
+export interface LeaderboardEntry {
+  player: Player;
+  totalStrokes: number;
+  stablefordPoints: number;
+  holesPlayed: number;
+  position: number;
+  toPar: number;
+}
