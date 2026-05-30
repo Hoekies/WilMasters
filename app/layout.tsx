@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
@@ -9,7 +9,12 @@ export const metadata: Metadata = {
   title: "Golf z'n Loatst",
   description: "Live golf score-app voor kleine groepen",
   icons: { icon: "/favicon.png" },
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
