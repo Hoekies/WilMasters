@@ -5,13 +5,24 @@ import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/fire
 import { db } from '@/lib/firebase';
 import { Round } from '@/lib/types';
 import { buildLeaderboard } from '@/lib/scoring';
+import { useAdmin } from '@/lib/useAdmin';
 import Image from 'next/image';
 import Link from 'next/link';
 
 export default function HistoryPage() {
+  const { isAdmin, login } = useAdmin();
   const [rounds, setRounds] = useState<Round[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCourse, setSelectedCourse] = useState<string>('alle');
+  const [loginModal, setLoginModal] = useState(false);
+  const [loginForm, setLoginForm] = useState({ user: '', pass: '' });
+  const [loginError, setLoginError] = useState('');
+
+  function doLogin() {
+    if (login(loginForm.user, loginForm.pass)) {
+      setLoginModal(false); setLoginForm({ user: '', pass: '' }); setLoginError('');
+    } else setLoginError('Gebruikersnaam of wachtwoord onjuist.');
+  }
 
   useEffect(() => {
     async function load() {
@@ -63,6 +74,12 @@ export default function HistoryPage() {
             {c === 'alle' ? 'Alle banen' : c}
           </button>
         ))}
+        {!isAdmin && (
+          <button onClick={() => setLoginModal(true)}
+            className="flex items-center justify-center w-9 h-9 rounded-xl text-sm shrink-0"
+            style={{ background: '#243d24', border: '1px solid #3a6b3a', color: '#7fbf7f' }}
+            title="Inloggen">🔒</button>
+        )}
         <Link
           href="/"
           className="flex items-center justify-center w-9 h-9 rounded-xl text-base ml-auto shrink-0 transition-colors"
@@ -89,10 +106,33 @@ export default function HistoryPage() {
             key={round.id}
             round={round}
             allRounds={rounds}
+            isAdmin={isAdmin}
             onDelete={(id) => setRounds((prev) => prev.filter((r) => r.id !== id))}
           />
         ))}
       </div>
+
+      {/* Login modal */}
+      {loginModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-6"
+             style={{ background: 'rgba(0,0,0,0.8)' }}
+             onClick={(e) => e.target === e.currentTarget && setLoginModal(false)}>
+          <div className="w-full max-w-xs rounded-2xl p-5 flex flex-col gap-4"
+               style={{ background: '#1f3a1f', border: '1px solid #3a6b3a' }}>
+            <div className="flex items-center justify-between">
+              <h2 className="font-bold">Inloggen</h2>
+              <button onClick={() => setLoginModal(false)} className="text-2xl" style={{ color: '#7fbf7f' }}>×</button>
+            </div>
+            <input className="input" placeholder="Gebruikersnaam" value={loginForm.user}
+              onChange={(e) => setLoginForm(f => ({ ...f, user: e.target.value }))} />
+            <input className="input" type="password" placeholder="Wachtwoord" value={loginForm.pass}
+              onChange={(e) => setLoginForm(f => ({ ...f, pass: e.target.value }))}
+              onKeyDown={(e) => e.key === 'Enter' && doLogin()} />
+            {loginError && <p className="text-red-400 text-sm">{loginError}</p>}
+            <button onClick={doLogin} className="btn-primary">Inloggen</button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
@@ -100,10 +140,12 @@ export default function HistoryPage() {
 function RoundCard({
   round,
   allRounds,
+  isAdmin,
   onDelete,
 }: {
   round: Round;
   allRounds: Round[];
+  isAdmin: boolean;
   onDelete: (id: string) => void;
 }) {
   const [expandedPlayer, setExpandedPlayer] = useState<string | null>(null);
@@ -156,13 +198,15 @@ function RoundCard({
           >
             Bekijken
           </Link>
-          <button
-            onClick={handleDelete}
-            className="text-xs px-2 py-1.5 rounded-lg transition-colors"
-            style={{ border: '1px solid #7a2a1a', color: '#e8521a' }}
-          >
-            🗑
-          </button>
+          {isAdmin && (
+            <button
+              onClick={handleDelete}
+              className="text-xs px-2 py-1.5 rounded-lg transition-colors"
+              style={{ border: '1px solid #7a2a1a', color: '#e8521a' }}
+            >
+              🗑
+            </button>
+          )}
         </div>
       </div>
 

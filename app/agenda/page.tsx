@@ -11,21 +11,7 @@ import Cropper from 'react-easy-crop';
 import Image from 'next/image';
 import Link from 'next/link';
 
-/* ── auth ── */
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'laanderhof';
-const AUTH_KEY = 'wm_admin';
-
-function useAdmin() {
-  const [isAdmin, setIsAdmin] = useState(false);
-  useEffect(() => { setIsAdmin(localStorage.getItem(AUTH_KEY) === '1'); }, []);
-  const login = (u: string, p: string) => {
-    if (u === ADMIN_USER && p === ADMIN_PASS) { localStorage.setItem(AUTH_KEY, '1'); setIsAdmin(true); return true; }
-    return false;
-  };
-  const logout = () => { localStorage.removeItem(AUTH_KEY); setIsAdmin(false); };
-  return { isAdmin, login, logout };
-}
+import { useAdmin } from '@/lib/useAdmin';
 
 /* ── crop helpers ── */
 interface Area { x: number; y: number; width: number; height: number; }
