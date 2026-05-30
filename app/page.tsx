@@ -120,12 +120,13 @@ export default function HomePage() {
       {/* Vaste header: logo + tabs */}
       <div className="shrink-0 flex flex-col items-center w-full max-w-lg px-4 pt-3 pb-0">
         <Image
-          src="/logo.png"
+          src="/logo-breed.png"
           alt="Willemien's Masters"
-          width={96}
-          height={96}
+          width={600}
+          height={180}
           priority
-          className="drop-shadow-xl mb-2"
+          className="drop-shadow-xl mb-2 h-auto"
+          style={{ width: '80%', maxWidth: '360px' }}
         />
         <div className="flex rounded-2xl overflow-hidden border border-[#3a6b3a] w-full mb-2">
           {(['create', 'join'] as const).map((t) => (
