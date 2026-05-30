@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { collection, addDoc, doc, getDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Player, Round } from '@/lib/types';
 import Image from 'next/image';
+
 
 function generateId(): string {
   return Math.random().toString(36).slice(2, 8).toUpperCase();
@@ -16,17 +17,33 @@ export default function HomePage() {
   const [tab, setTab] = useState<'create' | 'join'>('create');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showScoringInfo, setShowScoringInfo] = useState(false);
 
-  // Create form state
   const [courseName, setCourseName] = useState('');
   const [holes, setHoles] = useState<9 | 18>(18);
-  const [scoringSystem, setScoringSystem] = useState<'strokeplay' | 'stableford'>('stableford');
+  const [scoringSystem, setScoringSystem] = useState<'strokeplay' | 'stableford'>('strokeplay');
   const [playerRows, setPlayerRows] = useState<{ name: string; handicap: string }[]>([
     { name: '', handicap: '0' },
   ]);
-
-  // Join form state
   const [joinCode, setJoinCode] = useState('');
+  const [knownCourses, setKnownCourses] = useState<string[]>([]);
+  const [knownPlayers, setKnownPlayers] = useState<string[]>([]);
+
+  useEffect(() => {
+    async function loadSuggestions() {
+      const snap = await getDocs(collection(db, 'rounds'));
+      const courses = new Set<string>();
+      const players = new Set<string>();
+      snap.docs.forEach((d) => {
+        const r = d.data() as Round;
+        if (r.courseName) courses.add(r.courseName.trim());
+        r.players?.forEach((p) => { if (p.name) players.add(p.name.trim()); });
+      });
+      setKnownCourses(Array.from(courses).sort());
+      setKnownPlayers(Array.from(players).sort());
+    }
+    loadSuggestions();
+  }, []);
 
   function addPlayer() {
     setPlayerRows((rows) => [...rows, { name: '', handicap: '0' }]);
@@ -94,81 +111,146 @@ export default function HomePage() {
   }
 
   return (
-    <main className="flex flex-col items-center min-h-screen px-4 py-8 gap-6">
-      <div className="flex flex-col items-center gap-2 mb-2">
-        <Image src="/logo.png" alt="Golf z'n Loatst" width={80} height={80} priority />
-        <h1 className="text-2xl font-bold tracking-tight">Golf z&apos;n Loatst</h1>
-        <p className="text-green-300 text-sm">Live scores voor kleine groepen</p>
+    <main className="flex flex-col items-center min-h-screen px-4 py-8 sm:py-12">
+      {/* Logo — geen tekst eronder */}
+      <div className="mb-6 sm:mb-8">
+        <Image
+          src="/logo.png"
+          alt="Willemien's Masters"
+          width={160}
+          height={160}
+          priority
+          className="drop-shadow-xl"
+        />
       </div>
 
       {/* Tabs */}
-      <div className="flex rounded-xl overflow-hidden border border-green-700 w-full max-w-md">
+      <div className="flex rounded-2xl overflow-hidden border border-[#3a6b3a] w-full max-w-sm sm:max-w-md md:max-w-lg mb-5">
         {(['create', 'join'] as const).map((t) => (
           <button
             key={t}
             onClick={() => { setTab(t); setError(''); }}
-            className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
-              tab === t ? 'bg-green-600 text-white' : 'text-green-300 hover:bg-green-900'
+            className={`flex-1 py-3 text-sm font-semibold transition-colors ${
+              tab === t
+                ? 'text-white'
+                : 'text-[#7fbf7f] hover:bg-[#243d24]'
             }`}
+            style={tab === t ? { background: '#3d9a3d' } : {}}
           >
-            {t === 'create' ? 'Nieuw rondje' : 'Doe mee'}
+            {t === 'create' ? '⛳ Nieuw rondje' : '🔗 Doe mee'}
           </button>
         ))}
       </div>
 
-      <div className="w-full max-w-md flex flex-col gap-4">
+      <div className="w-full max-w-sm sm:max-w-md md:max-w-lg flex flex-col gap-4">
         {tab === 'create' ? (
           <>
-            <div className="flex flex-col gap-1">
-              <label className="text-sm text-green-300">Golfbaan</label>
-              <input
-                className="input"
-                placeholder="Naam van de golfbaan"
-                value={courseName}
-                onChange={(e) => setCourseName(e.target.value)}
-              />
+            {/* Baan + instellingen */}
+            <div className="card flex flex-col gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-[#7fbf7f] uppercase tracking-wide">Golfbaan</label>
+                <input
+                  className="input"
+                  placeholder="Naam van de golfbaan"
+                  value={courseName}
+                  onChange={(e) => setCourseName(e.target.value)}
+                  list="course-suggestions"
+                  autoComplete="off"
+                />
+                {knownCourses.length > 0 && (
+                  <datalist id="course-suggestions">
+                    {knownCourses.map((c) => <option key={c} value={c} />)}
+                  </datalist>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-[#7fbf7f] uppercase tracking-wide">Holes</label>
+                  <select className="input" value={holes} onChange={(e) => setHoles(Number(e.target.value) as 9 | 18)}>
+                    <option value={18}>18 holes</option>
+                    <option value={9}>9 holes</option>
+                  </select>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <label className="text-xs font-semibold text-[#7fbf7f] uppercase tracking-wide">Systeem</label>
+                    <button
+                      type="button"
+                      onClick={() => setShowScoringInfo((v) => !v)}
+                      className="w-4 h-4 rounded-full text-[10px] font-bold leading-none flex items-center justify-center shrink-0 transition-colors"
+                      style={{ background: '#3a6b3a', color: '#7fbf7f' }}
+                      title="Uitleg scoring"
+                    >
+                      ?
+                    </button>
+                  </div>
+                  <select className="input" value={scoringSystem} onChange={(e) => setScoringSystem(e.target.value as 'strokeplay' | 'stableford')}>
+                    <option value="stableford">Stableford</option>
+                    <option value="strokeplay">Strokeplay</option>
+                  </select>
+                  {showScoringInfo && (
+                    <div className="rounded-xl p-3 mt-1 text-xs flex flex-col gap-2 leading-relaxed"
+                         style={{ background: '#1c3a1c', border: '1px solid #3a6b3a', color: '#a0c8a0' }}>
+                      <div>
+                        <span className="font-bold" style={{ color: '#f5c842' }}>Stableford</span>
+                        {' '}— je scoort punten per hole op basis van je handicap. Par = 2 punten, birdie = 3, bogey = 1. Hoge score wint. Minder erg als je een slechte hole hebt.
+                      </div>
+                      <div>
+                        <span className="font-bold" style={{ color: '#e8521a' }}>Strokeplay</span>
+                        {' '}— gewoon slagen tellen over alle holes. Lage score wint. Klassiek toernooi-formaat.
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
-            <div className="flex gap-3">
-              <div className="flex flex-col gap-1 flex-1">
-                <label className="text-sm text-green-300">Holes</label>
-                <select className="input" value={holes} onChange={(e) => setHoles(Number(e.target.value) as 9 | 18)}>
-                  <option value={18}>18 holes</option>
-                  <option value={9}>9 holes</option>
-                </select>
+            {/* Spelers */}
+            <div className="card flex flex-col gap-2">
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#7fbf7f' }}>
+                  Spelers
+                </label>
+                {scoringSystem === 'stableford' && (
+                  <span className="text-xs" style={{ color: '#5a8a5a' }}>naam · handicap</span>
+                )}
               </div>
-              <div className="flex flex-col gap-1 flex-1">
-                <label className="text-sm text-green-300">Systeem</label>
-                <select className="input" value={scoringSystem} onChange={(e) => setScoringSystem(e.target.value as 'strokeplay' | 'stableford')}>
-                  <option value="stableford">Stableford</option>
-                  <option value="strokeplay">Strokeplay</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-sm text-green-300">Spelers</label>
+              {knownPlayers.length > 0 && (
+                <datalist id="player-suggestions">
+                  {knownPlayers.map((p) => <option key={p} value={p} />)}
+                </datalist>
+              )}
               {playerRows.map((row, i) => (
-                <div key={i} className="flex gap-2 items-center">
+                <div key={i} className="flex gap-2 items-center rounded-xl px-3 py-2" style={{ background: '#1c3a1c', border: '1px solid #2d5a2d' }}>
+                  <span className="text-xs font-bold w-5 text-center shrink-0" style={{ color: '#3d9a3d' }}>{i + 1}</span>
                   <input
-                    className="input flex-1"
+                    className="flex-1 bg-transparent text-sm text-white placeholder-[#3a5a3a] focus:outline-none"
                     placeholder={`Naam speler ${i + 1}`}
                     value={row.name}
                     onChange={(e) => updatePlayer(i, 'name', e.target.value)}
+                    list="player-suggestions"
+                    autoComplete="off"
                   />
-                  <input
-                    className="input w-20 text-center"
-                    placeholder="HCP"
-                    type="number"
-                    min={0}
-                    max={54}
-                    value={row.handicap}
-                    onChange={(e) => updatePlayer(i, 'handicap', e.target.value)}
-                  />
+                  {scoringSystem === 'stableford' && (
+                    <input
+                      className="w-14 bg-transparent text-center text-sm text-white placeholder-[#3a5a3a] focus:outline-none rounded-lg py-0.5"
+                      style={{ border: '1px solid #3a6b3a' }}
+                      placeholder="HCP"
+                      type="number"
+                      min={0}
+                      max={54}
+                      value={row.handicap}
+                      onChange={(e) => updatePlayer(i, 'handicap', e.target.value)}
+                    />
+                  )}
                   {playerRows.length > 1 && (
                     <button
                       onClick={() => removePlayer(i)}
-                      className="text-green-400 hover:text-red-400 text-xl leading-none"
+                      className="text-xl leading-none w-6 shrink-0 transition-colors"
+                      style={{ color: '#3a5a3a' }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = '#e8521a')}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = '#3a5a3a')}
                     >
                       ×
                     </button>
@@ -178,49 +260,69 @@ export default function HomePage() {
               {playerRows.length < 30 && (
                 <button
                   onClick={addPlayer}
-                  className="text-sm text-green-400 hover:text-green-200 self-start mt-1"
+                  className="text-sm self-start font-medium transition-colors pt-1"
+                  style={{ color: '#3d9a3d' }}
                 >
                   + Speler toevoegen
                 </button>
               )}
             </div>
 
-            {error && <p className="text-red-400 text-sm">{error}</p>}
+            {error && <p className="text-red-400 text-sm text-center">{error}</p>}
 
-            <button
-              onClick={createRound}
-              disabled={loading}
-              className="btn-primary mt-2"
-            >
-              {loading ? 'Aanmaken...' : 'Rondje starten'}
-            </button>
+            <div className="grid grid-cols-3 gap-3">
+              <button
+                onClick={createRound}
+                disabled={loading}
+                className="flex flex-col items-center justify-center gap-1 rounded-xl py-4 font-semibold text-sm transition-colors disabled:opacity-40"
+                style={{ background: '#3d9a3d', color: '#fff' }}
+              >
+                <span className="text-3xl leading-none">{loading ? '⏳' : '🏌️'}</span>
+                <span className="text-xs text-center leading-tight">{loading ? 'Aanmaken...' : 'Rondje starten'}</span>
+              </button>
+              <a
+                href="/history"
+                className="flex flex-col items-center justify-center gap-1 rounded-xl py-4 font-semibold text-sm transition-colors"
+                style={{ background: '#f5c842', color: '#1c3a1c' }}
+              >
+                <span className="text-3xl leading-none">🏆</span>
+                <span className="text-xs text-center leading-tight">Voorgaande edities</span>
+              </a>
+              <a
+                href="/agenda"
+                className="flex flex-col items-center justify-center gap-1 rounded-xl py-4 font-semibold text-sm transition-colors"
+                style={{ background: '#243d24', border: '1px solid #3a6b3a', color: '#fff' }}
+              >
+                <span className="text-3xl leading-none">📅</span>
+                <span className="text-xs text-center leading-tight">Agenda</span>
+              </a>
+            </div>
           </>
         ) : (
-          <>
-            <div className="flex flex-col gap-1">
-              <label className="text-sm text-green-300">Rondje-code</label>
+          <div className="card flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-[#7fbf7f] uppercase tracking-wide">Rondje-code</label>
               <input
-                className="input text-center text-xl tracking-widest uppercase"
+                className="input text-center text-2xl tracking-[0.3em] uppercase font-bold"
                 placeholder="ABCDEF"
                 value={joinCode}
                 onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                 maxLength={20}
               />
-              <p className="text-xs text-green-500">Vraag de code of scan de QR-code bij de score-invoerder.</p>
+              <p className="text-xs text-[#5a8a5a] text-center mt-1">
+                Vraag de code bij de score-invoerder of scan de QR-code.
+              </p>
             </div>
 
-            {error && <p className="text-red-400 text-sm">{error}</p>}
+            {error && <p className="text-red-400 text-sm text-center">{error}</p>}
 
-            <button
-              onClick={joinRound}
-              disabled={loading}
-              className="btn-primary mt-2"
-            >
-              {loading ? 'Zoeken...' : 'Naar leaderboard'}
+            <button onClick={joinRound} disabled={loading} className="btn-primary">
+              {loading ? 'Zoeken...' : 'Naar leaderboard 🏆'}
             </button>
-          </>
+          </div>
         )}
       </div>
+
     </main>
   );
 }

@@ -14,8 +14,17 @@ export interface Round {
   holes: 9 | 18;
   scoringSystem: ScoringSystem;
   createdAt: number;
+  finishedAt?: number;
   status: RoundStatus;
   players: Player[];
+}
+
+export interface Activity {
+  id?: string;
+  name: string;
+  description?: string;
+  dateTime: number;
+  createdAt: number;
 }
 
 export interface LeaderboardEntry {

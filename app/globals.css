@@ -2,19 +2,40 @@
 
 @theme inline {
   --font-sans: var(--font-geist);
+
+  /* Logo-kleuren */
+  --color-brand-green:     #3d9a3d;
+  --color-brand-green-dark:#1c3a1c;
+  --color-brand-orange:    #e8521a;
+  --color-brand-yellow:    #f5c842;
+  --color-surface:         #243d24;
+  --color-surface-alt:     #1c3a1c;
+  --color-border:          #3a6b3a;
+  --color-text-muted:      #7fbf7f;
 }
 
-/* Utility classes voor hergebruik in de app */
 @layer components {
   .input {
-    @apply w-full rounded-lg bg-green-900/50 border border-green-700 px-3 py-2.5 text-white placeholder-green-600 focus:outline-none focus:border-green-400 text-sm;
+    @apply w-full rounded-xl bg-[#1c3a1c] border border-[#3a6b3a] px-4 py-3
+           text-white placeholder-[#5a8a5a]
+           focus:outline-none focus:border-[#3d9a3d] focus:ring-1 focus:ring-[#3d9a3d]
+           text-sm transition-colors;
   }
 
   .btn-primary {
-    @apply w-full rounded-xl bg-green-600 hover:bg-green-500 active:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed px-5 py-3 font-semibold text-white transition-colors text-sm;
+    @apply w-full rounded-xl bg-[#3d9a3d] hover:bg-[#4ab04a] active:bg-[#2d7a2d]
+           disabled:opacity-40 disabled:cursor-not-allowed
+           px-6 py-3.5 font-semibold text-white transition-colors text-sm
+           shadow-lg shadow-[#1c3a1c];
   }
 
   .btn-secondary {
-    @apply w-full rounded-xl border border-green-700 hover:bg-green-900/50 disabled:opacity-50 disabled:cursor-not-allowed px-5 py-3 font-medium text-green-300 transition-colors text-sm;
+    @apply w-full rounded-xl border border-[#3a6b3a] hover:bg-[#243d24]
+           disabled:opacity-40 disabled:cursor-not-allowed
+           px-6 py-3.5 font-medium text-[#7fbf7f] transition-colors text-sm;
+  }
+
+  .card {
+    @apply bg-[#243d24] border border-[#3a6b3a] rounded-2xl p-4;
   }
 }

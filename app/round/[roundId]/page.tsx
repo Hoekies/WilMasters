@@ -9,6 +9,8 @@ import { buildLeaderboard } from '@/lib/scoring';
 import Image from 'next/image';
 import Link from 'next/link';
 
+const MEDAL: Record<number, string> = { 1: '🏆', 2: '🥈', 3: '🥉' };
+
 export default function LeaderboardPage() {
   const { roundId } = useParams<{ roundId: string }>();
   const router = useRouter();
@@ -37,8 +39,14 @@ export default function LeaderboardPage() {
   async function finishRound() {
     if (!confirm('Rondje afsluiten?')) return;
     setFinishing(true);
-    await updateDoc(doc(db, 'rounds', roundId), { status: 'finished' });
+    await updateDoc(doc(db, 'rounds', roundId), {
+      status: 'finished',
+      finishedAt: Date.now(),
+    });
     setFinishing(false);
+    if (confirm('Rondje afgesloten! Wil je naar het dashboard?')) {
+      router.push('/');
+    }
   }
 
   function copyLink() {
@@ -50,68 +58,105 @@ export default function LeaderboardPage() {
   if (error) return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6 gap-4">
       <p className="text-red-400">{error}</p>
-      <Link href="/" className="text-green-400 underline">Terug</Link>
+      <Link href="/" style={{ color: '#3d9a3d' }} className="underline">Terug</Link>
     </main>
   );
 
   if (!round) return (
     <main className="flex flex-col items-center justify-center min-h-screen">
-      <p className="text-green-300 animate-pulse">Laden...</p>
+      <p style={{ color: '#7fbf7f' }} className="animate-pulse text-sm">Laden...</p>
     </main>
   );
 
   return (
-    <main className="flex flex-col min-h-screen px-4 py-6 gap-5 max-w-lg mx-auto w-full">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <Link href="/">
-          <Image src="/logo.png" alt="Logo" width={36} height={36} />
-        </Link>
-        <div className="flex-1">
+    <main className="flex flex-col min-h-screen gap-4 max-w-lg mx-auto w-full sm:max-w-xl md:max-w-2xl">
+
+      {/* Logo 70% breed */}
+      <Link href="/" className="flex justify-center pt-5 px-4">
+        <Image
+          src="/logo-breed.png"
+          alt="Willemien's Masters"
+          width={600}
+          height={180}
+          className="h-auto drop-shadow-lg"
+          style={{ width: '70%' }}
+          priority
+        />
+      </Link>
+
+      {/* Rondje-info */}
+      <div className="px-4 flex items-center justify-between">
+        <div>
           <h1 className="font-bold text-lg leading-tight">{round.courseName}</h1>
-          <p className="text-green-400 text-xs">
-            {round.holes} holes · {round.scoringSystem === 'stableford' ? 'Stableford' : 'Strokeplay'} ·{' '}
-            {round.status === 'finished' ? '✓ Afgerond' : 'Live'}
+          <p className="text-xs mt-0.5" style={{ color: '#7fbf7f' }}>
+            {round.holes} holes · {round.scoringSystem === 'stableford' ? 'Stableford' : 'Strokeplay'}
+            {round.status === 'finished'
+              ? <span style={{ color: '#f5c842' }}> · ✓ Afgerond</span>
+              : <span style={{ color: '#3d9a3d' }}> · 🔴 Live</span>}
           </p>
         </div>
-        <span className="text-xs bg-green-800 px-2 py-1 rounded font-mono">{roundId}</span>
+        <span className="text-xs font-mono px-2 py-1 rounded-lg"
+              style={{ background: '#1c3a1c', border: '1px solid #3a6b3a', color: '#7fbf7f' }}>
+          {roundId.slice(0, 8)}
+        </span>
       </div>
 
-      {/* Leaderboard */}
-      <div className="flex flex-col gap-2">
-        {leaderboard.map((entry, index) => (
-          <LeaderboardRow
-            key={entry.player.id}
-            entry={entry}
-            scoringSystem={round.scoringSystem}
-            isFirst={index === 0 && entry.holesPlayed > 0}
-          />
-        ))}
-      </div>
-
-      {/* Actions */}
-      {round.status === 'active' && (
-        <div className="flex flex-col gap-2 mt-auto pt-4 border-t border-green-800">
-          <Link
-            href={`/round/${roundId}/score`}
-            className="btn-primary text-center"
-          >
-            Scores invoeren
-          </Link>
-          <div className="flex gap-2">
-            <button onClick={copyLink} className="btn-secondary flex-1">
-              {copied ? '✓ Gekopieerd!' : 'Link kopiëren'}
-            </button>
-            <button
-              onClick={finishRound}
-              disabled={finishing}
-              className="btn-secondary flex-1 text-orange-400 border-orange-800 hover:bg-orange-950"
-            >
-              Afsluiten
-            </button>
-          </div>
+      {/* Kolomlabels */}
+      <div className="px-4">
+        <div className="flex items-center px-4 pb-1 text-xs font-semibold uppercase tracking-wide"
+             style={{ color: '#5a8a5a' }}>
+          <span className="w-10">#</span>
+          <span className="flex-1">Speler</span>
+          <span className="text-right">{round.scoringSystem === 'stableford' ? 'Punten' : 'Slagen / Par'}</span>
         </div>
-      )}
+
+        <div className="flex flex-col gap-2">
+          {leaderboard.map((entry, index) => (
+            <LeaderboardRow
+              key={entry.player.id}
+              entry={entry}
+              scoringSystem={round.scoringSystem}
+              index={index}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Acties */}
+      <div className="flex flex-col gap-2 px-4 mt-auto pb-2 pt-2" style={{ borderTop: '1px solid #3a6b3a' }}>
+        {round.status === 'active' && (
+          <>
+            <Link href={`/round/${roundId}/score`} className="btn-primary text-center">
+              ✏️ Scores invoeren
+            </Link>
+            <div className="flex gap-2">
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(`Volg live het leaderboard van ${round.courseName}! 🏌️\n${shareUrl}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 rounded-xl px-4 py-3.5 text-sm font-semibold text-center"
+                style={{ background: '#25D366', color: '#fff' }}
+              >
+                📲 WhatsApp
+              </a>
+              <button onClick={copyLink} className="btn-secondary flex-1">
+                {copied ? '✓ Gekopieerd!' : '🔗 Link'}
+              </button>
+              <button
+                onClick={finishRound}
+                disabled={finishing}
+                className="flex-1 rounded-xl border px-4 py-3.5 text-sm font-medium"
+                style={{ borderColor: '#7a3a1a', color: '#e8521a' }}
+              >
+                Afsluiten
+              </button>
+            </div>
+          </>
+        )}
+        <Link href="/history" className="text-center text-xs py-1" style={{ color: '#5a8a5a' }}>
+          📋 Bekijk eerdere rondjes
+        </Link>
+      </div>
     </main>
   );
 }
@@ -119,35 +164,81 @@ export default function LeaderboardPage() {
 function LeaderboardRow({
   entry,
   scoringSystem,
-  isFirst,
+  index,
 }: {
   entry: LeaderboardEntry;
   scoringSystem: 'strokeplay' | 'stableford';
-  isFirst: boolean;
+  index: number;
 }) {
   const { player, position, totalStrokes, stablefordPoints, holesPlayed, toPar } = entry;
   const hasScores = holesPlayed > 0;
+  const medal = hasScores && position > 0 ? MEDAL[position] : null;
+
+  const rowStyle =
+    position === 1 && hasScores ? { background: '#2d3a10', border: '1px solid #8a9a2a' } :
+    position === 2 && hasScores ? { background: '#2a2e38', border: '1px solid #6a7a9a' } :
+    position === 3 && hasScores ? { background: '#2e2018', border: '1px solid #8a6a3a' } :
+    { background: '#243d24', border: '1px solid #3a6b3a' };
+
+  const posColor =
+    position === 1 ? '#f5c842' :
+    position === 2 ? '#c0c0c0' :
+    position === 3 ? '#cd7f32' : '#5a8a5a';
+
+  const toParColor = toPar < 0 ? '#60a5fa' : toPar === 0 ? '#7fbf7f' : toPar <= 2 ? '#e8521a' : '#ef4444';
 
   return (
-    <div className={`flex items-center gap-3 rounded-xl px-4 py-3 ${isFirst ? 'bg-yellow-900/40 border border-yellow-700' : 'bg-green-900/30 border border-green-800'}`}>
-      <span className="w-6 text-center font-bold text-sm text-green-400">
-        {hasScores ? (position > 0 ? position : '-') : '-'}
-      </span>
-      <span className="flex-1 font-medium">{player.name}</span>
-      {player.handicap > 0 && (
-        <span className="text-xs text-green-500 mr-1">HCP {player.handicap}</span>
-      )}
-      <div className="text-right">
+    <div className="flex items-center rounded-2xl px-4 py-3 gap-3" style={rowStyle}>
+
+      {/* Positie / medaille */}
+      <div className="w-8 shrink-0 text-center">
+        {medal
+          ? <span className="text-2xl leading-none">{medal}</span>
+          : <span className="font-bold text-sm" style={{ color: hasScores ? posColor : '#3a5a3a' }}>
+              {hasScores ? position : '—'}
+            </span>
+        }
+      </div>
+
+      {/* Naam + voortgang */}
+      <div className="flex-1 min-w-0">
+        <span className={`font-semibold truncate block ${position === 1 && hasScores ? 'text-base' : 'text-sm'}`}>
+          {player.name}
+        </span>
+        <span className="text-xs" style={{ color: '#5a8a5a' }}>
+          {hasScores ? `${holesPlayed}/${player.scores.length} holes` : 'Nog niet gespeeld'}
+          {player.handicap > 0 && ` · HCP ${player.handicap}`}
+        </span>
+      </div>
+
+      {/* Score met duidelijke labels */}
+      <div className="text-right shrink-0 min-w-[70px]">
         {scoringSystem === 'stableford' ? (
-          <span className="font-bold text-yellow-300">{hasScores ? `${stablefordPoints} pt` : '—'}</span>
+          <>
+            <div className="font-bold text-xl leading-tight" style={{ color: position === 1 && hasScores ? '#f5c842' : '#fff' }}>
+              {hasScores ? stablefordPoints : '—'}
+            </div>
+            <div className="text-[10px] uppercase tracking-wide" style={{ color: '#5a8a5a' }}>punten</div>
+          </>
         ) : (
-          <span className="font-bold">{hasScores ? totalStrokes : '—'}</span>
-        )}
-        {scoringSystem === 'strokeplay' && hasScores && (
-          <div className="text-xs text-green-400">{toPar === 0 ? 'E' : toPar > 0 ? `+${toPar}` : toPar}</div>
+          <>
+            <div className="flex items-baseline justify-end gap-1.5">
+              <span className="text-[10px] uppercase tracking-wide" style={{ color: '#5a8a5a' }}>slagen</span>
+              <span className="font-bold text-xl leading-tight" style={{ color: position === 1 && hasScores ? '#f5c842' : '#fff' }}>
+                {hasScores ? totalStrokes : '—'}
+              </span>
+            </div>
+            {hasScores && (
+              <div className="flex items-baseline justify-end gap-1.5">
+                <span className="text-[10px] uppercase tracking-wide" style={{ color: '#5a8a5a' }}>t.o.v. par</span>
+                <span className="font-bold text-sm" style={{ color: toParColor }}>
+                  {toPar === 0 ? 'E' : toPar > 0 ? `+${toPar}` : toPar}
+                </span>
+              </div>
+            )}
+          </>
         )}
       </div>
-      <span className="text-xs text-green-500 ml-1">{holesPlayed}/{entry.player.scores.length}</span>
     </div>
   );
 }

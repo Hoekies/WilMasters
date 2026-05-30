@@ -16,7 +16,7 @@ export function calculateStrokeplayTotal(scores: (number | null)[]): number {
 }
 
 export function calculateStablefordPoints(scores: (number | null)[], handicap: number, holes: number): number {
-  return scores.reduce((total, strokes, index) => {
+  return scores.reduce<number>((total, strokes, index) => {
     if (strokes === null) return total;
     const hole = index + 1;
     const par = getParForHole(hole);
