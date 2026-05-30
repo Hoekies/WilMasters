@@ -23,6 +23,8 @@ export interface Activity {
   id?: string;
   name: string;
   description?: string;
+  location?: string;
+  image?: string; // base64
   dateTime: number;
   createdAt: number;
 }

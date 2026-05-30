@@ -1,23 +1,72 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   collection, query, orderBy, onSnapshot,
   addDoc, updateDoc, deleteDoc, doc,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Activity } from '@/lib/types';
+import Cropper from 'react-easy-crop';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const EMPTY_FORM = { name: '', description: '', dateTime: '' };
+/* ── auth ── */
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'laanderhof';
+const AUTH_KEY = 'wm_admin';
+
+function useAdmin() {
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => { setIsAdmin(localStorage.getItem(AUTH_KEY) === '1'); }, []);
+  const login = (u: string, p: string) => {
+    if (u === ADMIN_USER && p === ADMIN_PASS) { localStorage.setItem(AUTH_KEY, '1'); setIsAdmin(true); return true; }
+    return false;
+  };
+  const logout = () => { localStorage.removeItem(AUTH_KEY); setIsAdmin(false); };
+  return { isAdmin, login, logout };
+}
+
+/* ── crop helpers ── */
+interface Area { x: number; y: number; width: number; height: number; }
+
+async function getCroppedBase64(imageSrc: string, pixelCrop: Area): Promise<string> {
+  const image = await new Promise<HTMLImageElement>((res, rej) => {
+    const img = new window.Image();
+    img.onload = () => res(img);
+    img.onerror = rej;
+    img.src = imageSrc;
+  });
+  const canvas = document.createElement('canvas');
+  const size = 400;
+  canvas.width = size; canvas.height = size;
+  const ctx = canvas.getContext('2d')!;
+  ctx.drawImage(image, pixelCrop.x, pixelCrop.y, pixelCrop.width, pixelCrop.height, 0, 0, size, size);
+  return canvas.toDataURL('image/jpeg', 0.85);
+}
+
+/* ── main component ── */
+const EMPTY_FORM = { name: '', description: '', location: '', dateTime: '' };
 
 export default function AgendaPage() {
+  const { isAdmin, login, logout } = useAdmin();
   const [activities, setActivities] = useState<Activity[]>([]);
   const [modal, setModal] = useState<{ open: boolean; editing?: Activity }>({ open: false });
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [loginModal, setLoginModal] = useState(false);
+  const [loginForm, setLoginForm] = useState({ user: '', pass: '' });
+  const [loginError, setLoginError] = useState('');
+
+  /* image crop state */
+  const [rawImage, setRawImage] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedArea, setCroppedArea] = useState<Area | null>(null);
+  const [finalImage, setFinalImage] = useState<string | null>(null);
+  const [showCrop, setShowCrop] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const q = query(collection(db, 'activities'), orderBy('dateTime', 'asc'));
@@ -26,23 +75,40 @@ export default function AgendaPage() {
     });
   }, []);
 
+  const onCropComplete = useCallback((_: Area, px: Area) => setCroppedArea(px), []);
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => { setRawImage(reader.result as string); setZoom(1); setCrop({ x: 0, y: 0 }); setShowCrop(true); };
+    reader.readAsDataURL(file);
+  }
+
+  async function confirmCrop() {
+    if (!rawImage || !croppedArea) return;
+    const b64 = await getCroppedBase64(rawImage, croppedArea);
+    setFinalImage(b64);
+    setShowCrop(false);
+  }
+
   function openAdd() {
-    setForm(EMPTY_FORM);
+    if (!isAdmin) { setLoginModal(true); return; }
+    setForm(EMPTY_FORM); setFinalImage(null); setRawImage(null);
     setModal({ open: true });
   }
 
   function openEdit(a: Activity) {
+    if (!isAdmin) { setLoginModal(true); return; }
     const dt = new Date(a.dateTime);
     const pad = (n: number) => String(n).padStart(2, '0');
     const local = `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
-    setForm({ name: a.name, description: a.description ?? '', dateTime: local });
+    setForm({ name: a.name, description: a.description ?? '', location: a.location ?? '', dateTime: local });
+    setFinalImage(a.image ?? null); setRawImage(null);
     setModal({ open: true, editing: a });
   }
 
-  function closeModal() {
-    setModal({ open: false });
-    setForm(EMPTY_FORM);
-  }
+  function closeModal() { setModal({ open: false }); setForm(EMPTY_FORM); setFinalImage(null); setRawImage(null); }
 
   async function save() {
     if (!form.name.trim() || !form.dateTime) return;
@@ -50,6 +116,8 @@ export default function AgendaPage() {
     const data: Omit<Activity, 'id'> = {
       name: form.name.trim(),
       description: form.description.trim() || undefined,
+      location: form.location.trim() || undefined,
+      image: finalImage ?? undefined,
       dateTime: new Date(form.dateTime).getTime(),
       createdAt: Date.now(),
     };
@@ -58,13 +126,16 @@ export default function AgendaPage() {
     } else {
       await addDoc(collection(db, 'activities'), data);
     }
-    setSaving(false);
-    closeModal();
+    setSaving(false); closeModal();
   }
 
   async function confirmDelete(id: string) {
-    await deleteDoc(doc(db, 'activities', id));
-    setDeleteId(null);
+    await deleteDoc(doc(db, 'activities', id)); setDeleteId(null);
+  }
+
+  function doLogin() {
+    if (login(loginForm.user, loginForm.pass)) { setLoginModal(false); setLoginForm({ user: '', pass: '' }); setLoginError(''); }
+    else setLoginError('Gebruikersnaam of wachtwoord onjuist.');
   }
 
   const now = Date.now();
@@ -72,7 +143,7 @@ export default function AgendaPage() {
   const past = activities.filter((a) => a.dateTime < now);
 
   return (
-    <main className="flex flex-col min-h-screen gap-4 max-w-lg mx-auto w-full sm:max-w-xl">
+    <main className="flex flex-col min-h-screen gap-3 max-w-lg mx-auto w-full sm:max-w-xl">
 
       {/* Logo */}
       <Link href="/" className="flex justify-center pt-4 px-4">
@@ -82,33 +153,36 @@ export default function AgendaPage() {
 
       {/* Header */}
       <div className="px-4 flex items-center justify-between">
-        <h1 className="font-bold text-base sm:text-lg">Agenda</h1>
+        <h1 className="font-bold text-lg">Agenda</h1>
         <div className="flex items-center gap-2">
-          <button
-            onClick={openAdd}
-            className="flex items-center justify-center w-9 h-9 rounded-xl text-xl transition-colors"
-            style={{ background: '#3d9a3d', color: '#fff' }}
-            title="Activiteit toevoegen"
-          >
-            ＋
-          </button>
+          {isAdmin && (
+            <>
+              <button onClick={openAdd}
+                className="flex items-center justify-center w-9 h-9 rounded-xl text-xl font-bold transition-colors"
+                style={{ background: '#3d9a3d', color: '#fff' }} title="Toevoegen">＋</button>
+              <button onClick={logout}
+                className="flex items-center justify-center w-9 h-9 rounded-xl text-sm transition-colors"
+                style={{ background: '#243d24', border: '1px solid #3a6b3a', color: '#7fbf7f' }} title="Uitloggen">🔓</button>
+            </>
+          )}
+          {!isAdmin && (
+            <button onClick={() => setLoginModal(true)}
+              className="flex items-center justify-center w-9 h-9 rounded-xl text-sm transition-colors"
+              style={{ background: '#243d24', border: '1px solid #3a6b3a', color: '#7fbf7f' }} title="Inloggen">🔒</button>
+          )}
           <Link href="/"
-            className="flex items-center justify-center w-9 h-9 rounded-xl text-base transition-colors"
-            style={{ background: '#243d24', border: '1px solid #3a6b3a' }}
-            title="Home"
-          >
-            🏠
-          </Link>
+            className="flex items-center justify-center w-9 h-9 rounded-xl text-base"
+            style={{ background: '#243d24', border: '1px solid #3a6b3a' }}>🏠</Link>
         </div>
       </div>
 
-      {/* Upcoming */}
-      <div className="px-4 flex flex-col gap-3">
+      {/* Kaarten */}
+      <div className="px-4 flex flex-col gap-4 pb-4">
         {upcoming.length === 0 && past.length === 0 && (
           <div className="text-center py-12" style={{ color: '#5a8a5a' }}>
             <p className="text-4xl mb-3">📅</p>
             <p className="text-sm">Nog geen activiteiten gepland.</p>
-            <p className="text-xs mt-1">Druk op ＋ om iets toe te voegen.</p>
+            {isAdmin && <p className="text-xs mt-1">Druk op ＋ om iets toe te voegen.</p>}
           </div>
         )}
 
@@ -116,10 +190,7 @@ export default function AgendaPage() {
           <>
             <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#5a8a5a' }}>Aankomend</p>
             <div className="grid grid-cols-2 gap-3">
-              {upcoming.map((a) => (
-                <ActivityCard key={a.id} activity={a} onEdit={openEdit}
-                  onDelete={(id) => setDeleteId(id)} />
-              ))}
+              {upcoming.map((a) => <ActivityCard key={a.id} activity={a} isAdmin={isAdmin} onEdit={openEdit} onDelete={setDeleteId} />)}
             </div>
           </>
         )}
@@ -128,57 +199,120 @@ export default function AgendaPage() {
           <>
             <p className="text-xs font-semibold uppercase tracking-wide mt-2" style={{ color: '#3a5a3a' }}>Geweest</p>
             <div className="grid grid-cols-2 gap-3 opacity-50">
-              {past.map((a) => (
-                <ActivityCard key={a.id} activity={a} onEdit={openEdit}
-                  onDelete={(id) => setDeleteId(id)} isPast />
-              ))}
+              {past.map((a) => <ActivityCard key={a.id} activity={a} isAdmin={isAdmin} onEdit={openEdit} onDelete={setDeleteId} isPast />)}
             </div>
           </>
         )}
       </div>
 
-      {/* Modal: toevoegen / bewerken */}
+      {/* Login modal */}
+      {loginModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-6"
+             style={{ background: 'rgba(0,0,0,0.8)' }}
+             onClick={(e) => e.target === e.currentTarget && setLoginModal(false)}>
+          <div className="w-full max-w-xs rounded-2xl p-5 flex flex-col gap-4"
+               style={{ background: '#1f3a1f', border: '1px solid #3a6b3a' }}>
+            <div className="flex items-center justify-between">
+              <h2 className="font-bold">Inloggen</h2>
+              <button onClick={() => setLoginModal(false)} className="text-2xl" style={{ color: '#7fbf7f' }}>×</button>
+            </div>
+            <input className="input" placeholder="Gebruikersnaam" value={loginForm.user}
+              onChange={(e) => setLoginForm(f => ({ ...f, user: e.target.value }))} />
+            <input className="input" type="password" placeholder="Wachtwoord" value={loginForm.pass}
+              onChange={(e) => setLoginForm(f => ({ ...f, pass: e.target.value }))}
+              onKeyDown={(e) => e.key === 'Enter' && doLogin()} />
+            {loginError && <p className="text-red-400 text-sm">{loginError}</p>}
+            <button onClick={doLogin} className="btn-primary">Inloggen</button>
+          </div>
+        </div>
+      )}
+
+      {/* Crop modal */}
+      {showCrop && rawImage && (
+        <div className="fixed inset-0 z-50 flex flex-col" style={{ background: '#000' }}>
+          <div className="flex-1 relative">
+            <Cropper image={rawImage} crop={crop} zoom={zoom} aspect={1}
+              onCropChange={setCrop} onZoomChange={setZoom} onCropComplete={onCropComplete} />
+          </div>
+          <div className="p-4 flex flex-col gap-3" style={{ background: '#1f3a1f' }}>
+            <div className="flex items-center gap-3">
+              <span className="text-xs" style={{ color: '#7fbf7f' }}>Zoom</span>
+              <input type="range" min={1} max={3} step={0.05} value={zoom}
+                onChange={(e) => setZoom(Number(e.target.value))} className="flex-1" />
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setShowCrop(false)} className="btn-secondary flex-1">Annuleren</button>
+              <button onClick={confirmCrop} className="btn-primary flex-1">Bevestigen</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toevoegen/bewerken modal */}
       {modal.open && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center px-4 pb-4"
              style={{ background: 'rgba(0,0,0,0.7)' }}
              onClick={(e) => e.target === e.currentTarget && closeModal()}>
-          <div className="w-full max-w-md rounded-2xl flex flex-col gap-4 p-5"
+          <div className="w-full max-w-md rounded-2xl flex flex-col gap-4 p-5 max-h-[90vh] overflow-y-auto"
                style={{ background: '#1f3a1f', border: '1px solid #3a6b3a' }}>
             <div className="flex items-center justify-between">
-              <h2 className="font-bold text-base">
-                {modal.editing ? 'Activiteit bewerken' : 'Activiteit toevoegen'}
-              </h2>
-              <button onClick={closeModal} className="text-2xl leading-none w-8 h-8 flex items-center justify-center rounded-lg transition-colors"
-                      style={{ color: '#7fbf7f' }}>×</button>
+              <h2 className="font-bold">{modal.editing ? 'Bewerken' : 'Toevoegen'}</h2>
+              <button onClick={closeModal} className="text-2xl w-8 flex items-center justify-center" style={{ color: '#7fbf7f' }}>×</button>
             </div>
 
-            <div className="flex flex-col gap-3">
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#7fbf7f' }}>Naam *</label>
-                <input className="input" placeholder="bijv. Editie 2026" value={form.name}
-                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#7fbf7f' }}>Datum & tijd *</label>
-                <input className="input" type="datetime-local" value={form.dateTime}
-                  onChange={(e) => setForm((f) => ({ ...f, dateTime: e.target.value }))}
-                  style={{ colorScheme: 'dark' }} />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#7fbf7f' }}>
-                  Omschrijving <span style={{ color: '#3a5a3a' }}>(optioneel)</span>
-                </label>
-                <textarea className="input resize-none" rows={2} placeholder="Korte omschrijving..."
-                  value={form.description}
-                  onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
-              </div>
+            {/* Afbeelding */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#7fbf7f' }}>
+                Afbeelding <span style={{ color: '#3a5a3a' }}>(optioneel)</span>
+              </label>
+              {finalImage ? (
+                <div className="relative">
+                  <div className="w-full aspect-square rounded-xl overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={finalImage} alt="preview" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="absolute top-2 right-2 flex gap-1">
+                    <button onClick={() => fileRef.current?.click()}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
+                      style={{ background: '#1c3a1c', color: '#7fbf7f' }}>✏️</button>
+                    <button onClick={() => { setFinalImage(null); setRawImage(null); }}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
+                      style={{ background: '#1c3a1c', color: '#e8521a' }}>🗑</button>
+                  </div>
+                </div>
+              ) : (
+                <button onClick={() => fileRef.current?.click()}
+                  className="w-full aspect-square rounded-xl flex flex-col items-center justify-center gap-2 text-sm transition-colors"
+                  style={{ background: '#1c3a1c', border: '2px dashed #3a6b3a', color: '#5a8a5a' }}>
+                  <span className="text-3xl">📷</span>
+                  <span>Afbeelding kiezen</span>
+                </button>
+              )}
+              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
             </div>
 
-            <button
-              onClick={save}
-              disabled={saving || !form.name.trim() || !form.dateTime}
-              className="btn-primary"
-            >
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#7fbf7f' }}>Naam *</label>
+              <input className="input" placeholder="bijv. Editie 2026" value={form.name}
+                onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#7fbf7f' }}>Datum & tijd *</label>
+              <input className="input" type="datetime-local" value={form.dateTime}
+                onChange={(e) => setForm(f => ({ ...f, dateTime: e.target.value }))} style={{ colorScheme: 'dark' }} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#7fbf7f' }}>📍 Locatie <span style={{ color: '#3a5a3a' }}>(optioneel)</span></label>
+              <input className="input" placeholder="bijv. Oirschot" value={form.location}
+                onChange={(e) => setForm(f => ({ ...f, location: e.target.value }))} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#7fbf7f' }}>Omschrijving <span style={{ color: '#3a5a3a' }}>(optioneel)</span></label>
+              <textarea className="input resize-none" rows={2} placeholder="Korte omschrijving..."
+                value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} />
+            </div>
+
+            <button onClick={save} disabled={saving || !form.name.trim() || !form.dateTime} className="btn-primary">
               {saving ? '...' : modal.editing ? '💾 Opslaan' : '➕ Toevoegen'}
             </button>
           </div>
@@ -196,9 +330,7 @@ export default function AgendaPage() {
               <button onClick={() => setDeleteId(null)} className="btn-secondary flex-1">Annuleren</button>
               <button onClick={() => confirmDelete(deleteId)}
                 className="flex-1 rounded-xl py-3 text-sm font-semibold"
-                style={{ background: '#7a2a1a', color: '#fff' }}>
-                🗑 Verwijderen
-              </button>
+                style={{ background: '#7a2a1a', color: '#fff' }}>🗑 Verwijderen</button>
             </div>
           </div>
         </div>
@@ -207,58 +339,77 @@ export default function AgendaPage() {
   );
 }
 
-function ActivityCard({
-  activity, onEdit, onDelete, isPast = false,
-}: {
-  activity: Activity;
-  onEdit: (a: Activity) => void;
-  onDelete: (id: string) => void;
-  isPast?: boolean;
-}) {
-  const dt = new Date(activity.dateTime);
-  const dateLine = dt.toLocaleDateString('nl-NL', { weekday: 'short', day: 'numeric', month: 'short' });
-  const timeLine = dt.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+function ActivityCard({ activity, isAdmin, onEdit, onDelete, isPast = false }:
+  { activity: Activity; isAdmin: boolean; onEdit: (a: Activity) => void; onDelete: (id: string) => void; isPast?: boolean }) {
 
-  // Countdown
+  const dt = new Date(activity.dateTime);
+  const day = dt.getDate();
+  const month = dt.toLocaleDateString('nl-NL', { month: 'short', year: 'numeric' });
+  const time = dt.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+  const weekday = dt.toLocaleDateString('nl-NL', { weekday: 'long' });
+
   const diff = activity.dateTime - Date.now();
   const days = Math.ceil(diff / 86400000);
   const countdown = !isPast && days >= 0
-    ? days === 0 ? 'Vandaag!' : days === 1 ? 'Morgen' : `Over ${days} dagen`
+    ? days === 0 ? 'Vandaag!' : days === 1 ? 'Morgen!' : `Over ${days} dagen`
     : null;
 
+  const cardBg = isPast ? '#1a2e1a' : '#2a1f0a';
+  const cardBorder = isPast ? '#2a3a2a' : '#c87a00';
+  const accentColor = isPast ? '#5a8a5a' : '#f5c842';
+
   return (
-    <div className="rounded-2xl p-3 flex flex-col gap-2 relative"
-         style={{ background: '#243d24', border: `1px solid ${isPast ? '#2a3a2a' : '#3a6b3a'}` }}>
+    <div className="rounded-2xl overflow-hidden flex flex-col"
+         style={{ background: cardBg, border: `1px solid ${cardBorder}` }}>
 
-      {/* Actie-iconen */}
-      <div className="absolute top-2 right-2 flex gap-1">
-        <button onClick={() => onEdit(activity)}
-          className="w-7 h-7 flex items-center justify-center rounded-lg text-sm transition-colors"
-          style={{ background: '#1c3a1c', color: '#7fbf7f' }} title="Bewerken">✏️</button>
-        <button onClick={() => activity.id && onDelete(activity.id)}
-          className="w-7 h-7 flex items-center justify-center rounded-lg text-sm transition-colors"
-          style={{ background: '#1c3a1c', color: '#e8521a' }} title="Verwijderen">🗑</button>
-      </div>
+      {/* Afbeelding */}
+      {activity.image && (
+        <div className="w-full aspect-square overflow-hidden relative">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={activity.image} alt={activity.name} className="w-full h-full object-cover" />
+          {isAdmin && (
+            <div className="absolute top-1.5 right-1.5 flex gap-1">
+              <button onClick={() => onEdit(activity)}
+                className="w-7 h-7 flex items-center justify-center rounded-lg text-xs"
+                style={{ background: 'rgba(0,0,0,0.6)', color: '#fff' }}>✏️</button>
+              <button onClick={() => activity.id && onDelete(activity.id)}
+                className="w-7 h-7 flex items-center justify-center rounded-lg text-xs"
+                style={{ background: 'rgba(0,0,0,0.6)', color: '#e8521a' }}>🗑</button>
+            </div>
+          )}
+        </div>
+      )}
 
-      {/* Datum blokje */}
-      <div className="flex flex-col">
-        <span className="text-2xl font-black leading-none" style={{ color: isPast ? '#3a5a3a' : '#f5c842' }}>
-          {dt.getDate()}
-        </span>
-        <span className="text-xs" style={{ color: '#7fbf7f' }}>
-          {dt.toLocaleDateString('nl-NL', { month: 'short', year: 'numeric' })}
-        </span>
-      </div>
+      <div className="p-3 flex flex-col gap-1.5 flex-1">
+        {/* Datum groot */}
+        <div className="flex items-start justify-between">
+          <div>
+            <span className="text-4xl font-black leading-none" style={{ color: accentColor }}>{day}</span>
+            <div className="text-xs leading-tight" style={{ color: '#7fbf7f' }}>{month}</div>
+          </div>
+          {isAdmin && !activity.image && (
+            <div className="flex gap-1">
+              <button onClick={() => onEdit(activity)}
+                className="w-7 h-7 flex items-center justify-center rounded-lg text-xs"
+                style={{ background: '#1c3a1c', color: '#7fbf7f' }}>✏️</button>
+              <button onClick={() => activity.id && onDelete(activity.id)}
+                className="w-7 h-7 flex items-center justify-center rounded-lg text-xs"
+                style={{ background: '#1c3a1c', color: '#e8521a' }}>🗑</button>
+            </div>
+          )}
+        </div>
 
-      {/* Info */}
-      <div className="flex flex-col gap-0.5 pr-8">
+        {/* Info */}
         <p className="font-bold text-sm leading-tight">{activity.name}</p>
         {activity.description && (
           <p className="text-xs leading-relaxed" style={{ color: '#7fbf7f' }}>{activity.description}</p>
         )}
-        <p className="text-xs mt-0.5" style={{ color: '#5a8a5a' }}>{timeLine} · {dateLine}</p>
+        <p className="text-xs capitalize" style={{ color: '#5a8a5a' }}>{weekday} · {time}</p>
+        {activity.location && (
+          <p className="text-xs" style={{ color: '#5a8a5a' }}>📍 {activity.location}</p>
+        )}
         {countdown && (
-          <p className="text-xs font-semibold mt-0.5" style={{ color: '#3d9a3d' }}>{countdown}</p>
+          <p className="text-xs font-bold mt-0.5" style={{ color: '#3d9a3d' }}>{countdown}</p>
         )}
       </div>
     </div>
