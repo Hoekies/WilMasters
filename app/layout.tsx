@@ -6,9 +6,8 @@ import Footer from "@/components/Footer";
 const geist = Geist({ variable: "--font-geist", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Golf z'n Loatst",
+  title: "Willemien's Masters",
   description: "Live golf score-app voor kleine groepen",
-  icons: { icon: "/favicon.png" },
 };
 
 export const viewport: Viewport = {
