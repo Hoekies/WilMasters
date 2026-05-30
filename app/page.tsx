@@ -115,38 +115,37 @@ export default function HomePage() {
   const waText = encodeURIComponent(`Speel mee met de Willemien's Masters! 🏌️⛳\n${appUrl}`);
 
   return (
-    <main className="flex flex-col items-center min-h-screen px-4 py-8 sm:py-12">
-      {/* Logo — geen tekst eronder */}
-      <div className="mb-6 sm:mb-8">
+    <main className="flex flex-col h-[100dvh] overflow-hidden items-center">
+
+      {/* Vaste header: logo + tabs */}
+      <div className="shrink-0 flex flex-col items-center w-full max-w-lg px-4 pt-3 pb-0">
         <Image
           src="/logo.png"
           alt="Willemien's Masters"
-          width={160}
-          height={160}
+          width={96}
+          height={96}
           priority
-          className="drop-shadow-xl"
+          className="drop-shadow-xl mb-2"
         />
+        <div className="flex rounded-2xl overflow-hidden border border-[#3a6b3a] w-full mb-2">
+          {(['create', 'join'] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => { setTab(t); setError(''); }}
+              className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
+                tab === t ? 'text-white' : 'text-[#7fbf7f] hover:bg-[#243d24]'
+              }`}
+              style={tab === t ? { background: '#3d9a3d' } : {}}
+            >
+              {t === 'create' ? '⛳ Nieuw rondje' : '🔗 Doe mee'}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex rounded-2xl overflow-hidden border border-[#3a6b3a] w-full max-w-sm sm:max-w-md md:max-w-lg mb-5">
-        {(['create', 'join'] as const).map((t) => (
-          <button
-            key={t}
-            onClick={() => { setTab(t); setError(''); }}
-            className={`flex-1 py-3 text-sm font-semibold transition-colors ${
-              tab === t
-                ? 'text-white'
-                : 'text-[#7fbf7f] hover:bg-[#243d24]'
-            }`}
-            style={tab === t ? { background: '#3d9a3d' } : {}}
-          >
-            {t === 'create' ? '⛳ Nieuw rondje' : '🔗 Doe mee'}
-          </button>
-        ))}
-      </div>
-
-      <div className="w-full max-w-sm sm:max-w-md md:max-w-lg flex flex-col gap-4">
+      {/* Scrollbaar formulier */}
+      <div className="flex-1 min-h-0 overflow-y-auto w-full">
+        <div className="w-full max-w-lg mx-auto px-4 flex flex-col gap-3 py-2">
         {tab === 'create' ? (
           <>
             {/* Baan + instellingen */}
@@ -272,50 +271,9 @@ export default function HomePage() {
               )}
             </div>
 
-            {error && <p className="text-red-400 text-sm text-center">{error}</p>}
-
-            <div className="grid grid-cols-3 gap-3">
-              <button
-                onClick={createRound}
-                disabled={loading}
-                className="flex flex-col items-center justify-center gap-1 rounded-xl py-4 font-semibold text-sm transition-colors disabled:opacity-40"
-                style={{ background: '#3d9a3d', color: '#fff' }}
-              >
-                <span className="text-3xl leading-none">{loading ? '⏳' : '🏌️'}</span>
-                <span className="text-xs text-center leading-tight">{loading ? 'Aanmaken...' : 'Rondje starten'}</span>
-              </button>
-              <a
-                href="/history"
-                className="flex flex-col items-center justify-center gap-1 rounded-xl py-4 font-semibold text-sm transition-colors"
-                style={{ background: '#f5c842', color: '#1c3a1c' }}
-              >
-                <span className="text-3xl leading-none">🏆</span>
-                <span className="text-xs text-center leading-tight">Voorgaande edities</span>
-              </a>
-              <a
-                href="/agenda"
-                className="flex flex-col items-center justify-center gap-1 rounded-xl py-4 font-semibold text-sm transition-colors"
-                style={{ background: '#243d24', border: '1px solid #3a6b3a', color: '#fff' }}
-              >
-                <span className="text-3xl leading-none">📅</span>
-                <span className="text-xs text-center leading-tight">Agenda</span>
-              </a>
-            </div>
-
-            {/* WhatsApp deel-knop */}
-            <a
-              href={`https://wa.me/?text=${waText}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-3 w-full rounded-xl py-3 font-semibold text-sm transition-opacity hover:opacity-90"
-              style={{ background: '#25D366', color: '#fff' }}
-            >
-              <span className="text-xl leading-none">📲</span>
-              <span>Deel de app via WhatsApp</span>
-            </a>
           </>
         ) : (
-          <div className="card flex flex-col gap-4">
+          <div className="card flex flex-col gap-3">
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold text-[#7fbf7f] uppercase tracking-wide">Rondje-code</label>
               <input
@@ -329,13 +287,60 @@ export default function HomePage() {
                 Vraag de code bij de score-invoerder of scan de QR-code.
               </p>
             </div>
-
-            {error && <p className="text-red-400 text-sm text-center">{error}</p>}
-
-            <button onClick={joinRound} disabled={loading} className="btn-primary">
-              {loading ? 'Zoeken...' : 'Naar leaderboard 🏆'}
-            </button>
           </div>
+        )}
+        </div>
+      </div>
+
+      {/* Vaste actieknoppen onderaan */}
+      <div className="shrink-0 w-full max-w-lg px-4 pb-3 pt-2 flex flex-col gap-2"
+           style={{ borderTop: '1px solid #2d4a2d' }}>
+        {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+
+        {tab === 'create' ? (
+          <>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={createRound}
+                disabled={loading}
+                className="flex flex-col items-center justify-center gap-1 rounded-xl py-3 font-semibold text-sm transition-colors disabled:opacity-40"
+                style={{ background: '#3d9a3d', color: '#fff' }}
+              >
+                <span className="text-2xl leading-none">{loading ? '⏳' : '🏌️'}</span>
+                <span className="text-xs text-center leading-tight">{loading ? 'Aanmaken...' : 'Rondje starten'}</span>
+              </button>
+              <a
+                href="/history"
+                className="flex flex-col items-center justify-center gap-1 rounded-xl py-3 font-semibold text-sm"
+                style={{ background: '#f5c842', color: '#1c3a1c' }}
+              >
+                <span className="text-2xl leading-none">🏆</span>
+                <span className="text-xs text-center leading-tight">Voorgaande edities</span>
+              </a>
+              <a
+                href="/agenda"
+                className="flex flex-col items-center justify-center gap-1 rounded-xl py-3 font-semibold text-sm"
+                style={{ background: '#243d24', border: '1px solid #3a6b3a', color: '#fff' }}
+              >
+                <span className="text-2xl leading-none">📅</span>
+                <span className="text-xs text-center leading-tight">Agenda</span>
+              </a>
+            </div>
+            <a
+              href={`https://wa.me/?text=${waText}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-3 w-full rounded-xl py-2.5 font-semibold text-sm"
+              style={{ background: '#25D366', color: '#fff' }}
+            >
+              <span className="text-lg leading-none">📲</span>
+              <span>Deel de app via WhatsApp</span>
+            </a>
+          </>
+        ) : (
+          <button onClick={joinRound} disabled={loading} className="btn-primary">
+            {loading ? 'Zoeken...' : 'Naar leaderboard 🏆'}
+          </button>
         )}
       </div>
 
