@@ -285,8 +285,8 @@ export default function HomePage() {
               {playerRows.length < 30 && (
                 <button
                   onClick={addPlayer}
-                  className="text-sm self-start font-medium transition-colors pt-1"
-                  style={{ color: '#3d9a3d' }}
+                  className="text-sm font-semibold rounded-xl px-4 py-2 transition-colors mt-1"
+                  style={{ background: '#1c3a1c', border: '1px solid #3d9a3d', color: '#3d9a3d' }}
                 >
                   + Speler toevoegen
                 </button>
