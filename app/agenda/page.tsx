@@ -260,16 +260,16 @@ export default function AgendaPage() {
                   <div className="absolute top-2 right-2 flex gap-1">
                     <button onClick={() => fileRef.current?.click()}
                       className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
-                      style={{ background: '#1a271a', color: '#6a8870' }}>✏️</button>
+                      style={{ background: '#2c4530', color: '#6a8870' }}>✏️</button>
                     <button onClick={() => { setFinalImage(null); setRawImage(null); }}
                       className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
-                      style={{ background: '#1a271a', color: '#e8521a' }}>🗑</button>
+                      style={{ background: '#2c4530', color: '#e8521a' }}>🗑</button>
                   </div>
                 </div>
               ) : (
                 <button onClick={() => fileRef.current?.click()}
                   className="w-full aspect-square rounded-xl flex flex-col items-center justify-center gap-2 text-sm transition-colors"
-                  style={{ background: '#1a271a', border: '2px dashed #243028', color: '#4a6450' }}>
+                  style={{ background: '#2c4530', border: '2px dashed #243028', color: '#4a6450' }}>
                   <span className="text-3xl">📷</span>
                   <span>Afbeelding kiezen</span>
                 </button>
@@ -377,10 +377,10 @@ function ActivityCard({ activity, isAdmin, onEdit, onDelete, isPast = false }:
             <div className="flex gap-1">
               <button onClick={() => onEdit(activity)}
                 className="w-7 h-7 flex items-center justify-center rounded-lg text-xs"
-                style={{ background: '#1a271a', color: '#6a8870' }}>✏️</button>
+                style={{ background: '#2c4530', color: '#6a8870' }}>✏️</button>
               <button onClick={() => activity.id && onDelete(activity.id)}
                 className="w-7 h-7 flex items-center justify-center rounded-lg text-xs"
-                style={{ background: '#1a271a', color: '#e8521a' }}>🗑</button>
+                style={{ background: '#2c4530', color: '#e8521a' }}>🗑</button>
             </div>
           )}
         </div>

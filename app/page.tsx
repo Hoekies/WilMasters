@@ -190,7 +190,7 @@ export default function HomePage() {
           {/* Agenda icoon */}
           <a href="/agenda"
             className="flex items-center justify-center rounded-2xl px-3 shrink-0 transition-colors"
-            style={{ background: '#161d17', border: '1px solid #243028', color: '#fff' }}
+            style={{ background: 'rgba(0,0,0,0.15)',border: '1px solid #243028', color: '#fff' }}
             title="Agenda"
           >
             <span className="text-xl">📅</span>
@@ -273,7 +273,7 @@ export default function HomePage() {
 
             {showScoringInfo && (
               <div className="rounded-xl px-3 py-2.5 text-xs flex flex-col gap-1.5 leading-relaxed"
-                   style={{ background: '#1a271a', border: '1px solid #243028', color: '#6a8870' }}>
+                   style={{ background: '#2c4530', border: '1px solid #243028', color: '#6a8870' }}>
                 <div><span className="font-semibold" style={{ color: '#f5c842' }}>Stableford</span> — punten per hole op basis van handicap. Hoge score wint.</div>
                 <div><span className="font-semibold" style={{ color: '#e8521a' }}>Strokeplay</span> — slagen tellen over alle holes. Lage score wint.</div>
               </div>
@@ -292,21 +292,21 @@ export default function HomePage() {
                 </datalist>
               )}
               {playerRows.map((row, i) => (
-                <div key={i} className="flex gap-2 items-center rounded-xl px-3 py-2.5" style={{ background: '#111811', border: '1px solid #1a2218' }}>
+                <div key={i} className="flex gap-2 items-center rounded-xl px-3 py-2" style={{ background: '#f0f5f0', border: '1px solid #c8dcc8' }}>
                   <span className="text-xs font-bold w-4 shrink-0 text-center" style={{ color: '#2e8c3e' }}>{i + 1}</span>
                   <input
-                    className="flex-1 bg-transparent text-sm text-white focus:outline-none"
+                    className="flex-1 bg-transparent text-sm focus:outline-none"
                     placeholder={`Speler ${i + 1}`}
                     value={row.name}
                     onChange={(e) => updatePlayer(i, 'name', e.target.value)}
                     list="player-suggestions"
                     autoComplete="off"
-                    style={{ color: '#e0e0e0' }}
+                    style={{ color: '#1a2e1a' }}
                   />
                   {scoringSystem === 'stableford' && (
                     <input
                       className="w-12 bg-transparent text-center text-sm focus:outline-none rounded-lg py-0.5"
-                      style={{ border: '1px solid #243028', color: '#e0e0e0' }}
+                      style={{ border: '1px solid #c8dcc8', color: '#1a2e1a' }}
                       placeholder="HCP"
                       type="number" min={0} max={54}
                       value={row.handicap}
@@ -320,7 +320,7 @@ export default function HomePage() {
               ))}
               {playerRows.length < 30 && (
                 <button onClick={addPlayer} className="self-start flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium transition-colors"
-                  style={{ background: '#111811', border: '1px solid #243028', color: '#2e8c3e' }}>
+                  style={{ background: '#f0f5f0', border: '1px solid #243028', color: '#2e8c3e' }}>
                   <span className="text-base leading-none">+</span> Speler
                 </button>
               )}
@@ -366,7 +366,7 @@ export default function HomePage() {
               <a
                 href="/history"
                 className="flex items-center justify-center gap-2 rounded-xl px-3 py-2 font-semibold text-sm"
-                style={{ background: '#f5c842', color: '#1a271a' }}
+                style={{ background: '#f5c842', color: '#2c4530' }}
               >
                 <span className="text-3xl leading-none shrink-0">🏆</span>
                 <span className="text-xs leading-tight">Voorgaande edities</span>

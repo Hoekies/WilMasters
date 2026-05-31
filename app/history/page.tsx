@@ -68,7 +68,7 @@ export default function HistoryPage() {
             className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
             style={selectedCourse === c
               ? { background: '#2e8c3e', color: '#fff' }
-              : { background: '#1a271a', border: '1px solid #243028', color: '#6a8870' }
+              : { background: '#2c4530', border: '1px solid #243028', color: '#6a8870' }
             }
           >
             {c === 'alle' ? 'Alle banen' : c}
@@ -196,7 +196,7 @@ function RoundCard({
           <Link
             href={`/round/${round.id}`}
             className="text-xs px-2 py-1.5 rounded-lg"
-            style={{ background: '#1a271a', border: '1px solid #243028', color: '#6a8870' }}
+            style={{ background: '#2c4530', border: '1px solid #243028', color: '#6a8870' }}
           >
             Bekijken
           </Link>
@@ -225,7 +225,7 @@ function RoundCard({
                 onClick={() => setExpandedPlayer(isExpanded ? null : entry.player.name)}
                 className="w-full flex items-center gap-2 text-sm rounded-xl px-3 py-2 transition-colors text-left"
                 style={{
-                  background: isExpanded ? '#1a2c1e' : '#1a271a',
+                  background: isExpanded ? '#1a2c1e' : '#2c4530',
                   border: `1px solid ${isExpanded ? '#2e8c3e' : '#1e2c20'}`,
                 }}
               >
@@ -252,7 +252,7 @@ function RoundCard({
               {isExpanded && (
                 <div className="mt-1 ml-8 rounded-xl overflow-hidden" style={{ border: '1px solid #243028' }}>
                   <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide"
-                       style={{ background: '#1a271a', color: '#4a6450' }}>
+                       style={{ background: '#2c4530', color: '#4a6450' }}>
                     Vooruitgang op {round.courseName}
                   </div>
                   {history.map((h, idx) => {
