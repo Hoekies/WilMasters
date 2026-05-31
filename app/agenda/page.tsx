@@ -191,7 +191,7 @@ export default function AgendaPage() {
           {upcoming.length > 0 && (
             <>
               <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#4a6450' }}>Aankomend</p>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 {upcoming.map((a) => <ActivityCard key={a.id} activity={a} isAdmin={isAdmin} onEdit={openEdit} onDelete={setDeleteId} />)}
               </div>
             </>
@@ -200,7 +200,7 @@ export default function AgendaPage() {
           {past.length > 0 && (
             <>
               <p className="text-xs font-semibold uppercase tracking-wide mt-2" style={{ color: '#2a3a2e' }}>Geweest</p>
-              <div className="grid grid-cols-2 gap-3 opacity-50">
+              <div className="grid grid-cols-3 gap-3 opacity-50">
                 {past.map((a) => <ActivityCard key={a.id} activity={a} isAdmin={isAdmin} onEdit={openEdit} onDelete={setDeleteId} isPast />)}
               </div>
             </>
