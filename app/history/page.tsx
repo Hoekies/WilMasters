@@ -102,7 +102,7 @@ export default function HistoryPage() {
         </div>
       )}
 
-      <div className="flex flex-col gap-4 px-4 pb-4">
+      <div className="grid grid-cols-2 gap-3 px-4 pb-4">
         {filtered.map((round) => (
           <RoundCard
             key={round.id}
@@ -183,13 +183,14 @@ function RoundCard({
   const medals = ['🏆', '🥈', '🥉'];
 
   return (
-    <div className="card flex flex-col gap-3">
+    <div className="card flex flex-col gap-2 p-3">
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
-        <div>
-          <h2 className="font-bold text-base">{round.courseName}</h2>
-          <p className="text-xs mt-0.5" style={{ color: '#6a8870' }}>
-            {date} · {round.holes} holes · {round.scoringSystem === 'stableford' ? 'Stableford' : 'Strokeplay'}
+        <div className="flex-1 min-w-0">
+          <h2 className="font-bold text-sm">{round.courseName}</h2>
+          <p className="text-xs mt-0.5">
+            <span className="font-bold" style={{ color: '#f5c842' }}>{date}</span>
+            <span style={{ color: '#6a8870' }}> · {round.holes} holes · {round.scoringSystem === 'stableford' ? 'Stableford' : 'Strokeplay'}</span>
           </p>
         </div>
         <div className="flex gap-2 shrink-0">
