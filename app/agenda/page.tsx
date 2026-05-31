@@ -134,7 +134,7 @@ export default function AgendaPage() {
       {/* Logo */}
       <Link href="/" className="flex justify-center pt-4 px-4">
         <Image src="/logo-breed.png" alt="Willemien's Masters" width={600} height={180}
-          className="h-auto drop-shadow-lg" style={{ width: '70%' }} priority />
+          className="h-auto drop-shadow-lg" style={{ width: '80%', maxWidth: '360px' }} priority />
       </Link>
 
       {/* Header */}

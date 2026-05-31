@@ -80,7 +80,7 @@ export default function LeaderboardPage() {
           width={600}
           height={180}
           className="h-auto drop-shadow-lg"
-          style={{ width: '70%' }}
+          style={{ width: '80%', maxWidth: '360px' }}
           priority
         />
       </Link>
