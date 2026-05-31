@@ -21,6 +21,8 @@ export default function HomePage() {
   const [showScoringInfo, setShowScoringInfo] = useState(false);
 
   const [courseName, setCourseName] = useState('');
+  const [courseLocation, setCourseLocation] = useState('');
+  const [gpsLoading, setGpsLoading] = useState(false);
   const [holes, setHoles] = useState<9 | 18>(18);
   const [scoringSystem, setScoringSystem] = useState<'strokeplay' | 'stableford'>('strokeplay');
   const [playerRows, setPlayerRows] = useState<{ name: string; handicap: string }[]>([
@@ -54,6 +56,45 @@ export default function HomePage() {
     setPlayerRows((rows) => rows.filter((_, i) => i !== index));
   }
 
+  async function detectLocationByGPS() {
+    if (!navigator.geolocation) return setError('GPS niet beschikbaar op dit apparaat.');
+    setGpsLoading(true);
+    setError('');
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
+            { headers: { 'Accept-Language': 'nl' } }
+          );
+          const data = await res.json();
+          const place =
+            data.address?.golf_course ||
+            data.address?.leisure ||
+            data.address?.suburb ||
+            data.address?.village ||
+            data.address?.town ||
+            data.address?.city ||
+            '';
+          const city =
+            data.address?.city ||
+            data.address?.town ||
+            data.address?.village ||
+            data.address?.municipality ||
+            '';
+          if (place && !courseName) setCourseName(place);
+          if (city) setCourseLocation(city);
+        } catch {
+          setError('Locatie ophalen mislukt.');
+        }
+        setGpsLoading(false);
+      },
+      () => { setError('GPS toegang geweigerd.'); setGpsLoading(false); },
+      { timeout: 8000 }
+    );
+  }
+
   function updatePlayer(index: number, field: 'name' | 'handicap', value: string) {
     setPlayerRows((rows) => rows.map((r, i) => (i === index ? { ...r, [field]: value } : r)));
   }
@@ -76,6 +117,7 @@ export default function HomePage() {
 
     const round: Round = {
       courseName: courseName.trim(),
+      location: courseLocation.trim() || undefined,
       holes,
       scoringSystem,
       createdAt: Date.now(),
@@ -173,7 +215,18 @@ export default function HomePage() {
             {/* Baan + instellingen */}
             <div className="card flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-[#7fbf7f] uppercase tracking-wide">Golfbaan</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-[#7fbf7f] uppercase tracking-wide">Golfbaan</label>
+                  <button
+                    type="button"
+                    onClick={detectLocationByGPS}
+                    disabled={gpsLoading}
+                    className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
+                    style={{ background: '#1c3a1c', border: '1px solid #3a6b3a', color: '#7fbf7f' }}
+                  >
+                    {gpsLoading ? '⏳' : '📍'} {gpsLoading ? 'Zoeken...' : 'GPS'}
+                  </button>
+                </div>
                 <input
                   className="input"
                   placeholder="Naam van de golfbaan"
@@ -187,6 +240,12 @@ export default function HomePage() {
                     {knownCourses.map((c) => <option key={c} value={c} />)}
                   </datalist>
                 )}
+                <input
+                  className="input"
+                  placeholder="Plaats (bijv. Oirschot)"
+                  value={courseLocation}
+                  onChange={(e) => setCourseLocation(e.target.value)}
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-3">

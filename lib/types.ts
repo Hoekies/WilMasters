@@ -11,6 +11,7 @@ export interface Player {
 export interface Round {
   id?: string;
   courseName: string;
+  location?: string;
   holes: 9 | 18;
   scoringSystem: ScoringSystem;
   createdAt: number;

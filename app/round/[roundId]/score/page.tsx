@@ -94,10 +94,19 @@ export default function ScorePage() {
 
       {/* Header */}
       <div className="flex items-center gap-3 px-1">
-        <Link href={`/round/${roundId}`} className="text-sm font-medium shrink-0" style={{ color: '#7fbf7f' }}>
+        <Link
+          href={`/round/${roundId}`}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold shrink-0 transition-colors"
+          style={{ background: '#243d24', border: '1px solid #3a6b3a', color: '#7fbf7f' }}
+        >
           ← Leaderboard
         </Link>
-        <span className="flex-1 text-right text-sm truncate" style={{ color: '#5a8a5a' }}>{round.courseName}</span>
+        <div className="flex-1 min-w-0 text-right">
+          <p className="text-sm font-semibold truncate">{round.courseName}</p>
+          {round.location && (
+            <p className="text-xs truncate" style={{ color: '#5a8a5a' }}>📍 {round.location}</p>
+          )}
+        </div>
       </div>
 
       {/* Groep-selector (alleen bij >5 spelers) */}
