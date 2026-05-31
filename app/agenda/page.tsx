@@ -390,12 +390,12 @@ function ActivityCard({ activity, isAdmin, onEdit, onDelete, isPast = false }:
         </div>
       )}
 
-      <div className="p-3 flex flex-col gap-1.5 flex-1">
-        {/* Datum op één regel */}
-        <div className="flex items-center justify-between">
-          <span className="text-lg font-black leading-none" style={{ color: accentColor }}>{day} {month}</span>
+      <div className="p-3 flex flex-col gap-2 flex-1">
+        {/* Datum centraal en breed */}
+        <div className="relative text-center">
+          <span className="text-2xl font-black leading-none" style={{ color: accentColor }}>{day} {month}</span>
           {isAdmin && !activity.image && (
-            <div className="flex gap-1">
+            <div className="absolute top-0 right-0 flex gap-1">
               <button onClick={() => onEdit(activity)}
                 className="w-6 h-6 flex items-center justify-center rounded text-xs"
                 style={{ background: '#2c4530', color: '#6a8870' }}>✏️</button>
