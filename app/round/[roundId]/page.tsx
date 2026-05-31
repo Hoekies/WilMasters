@@ -85,9 +85,9 @@ export default function LeaderboardPage() {
         />
       </Link>
 
-      {/* Rondje-info gecentreerd */}
-      <div className="px-4 flex flex-col items-center text-center gap-1">
-        <h1 className="font-bold text-xl">{round.courseName}</h1>
+      {/* Rondje-info volledige breedte */}
+      <div className="px-4 flex flex-col items-center text-center gap-0.5">
+        <h1 className="font-bold text-2xl">{round.courseName}</h1>
         {round.location && (
           <p className="text-xs" style={{ color: '#6a8870' }}>
             {round.location}
@@ -99,11 +99,11 @@ export default function LeaderboardPage() {
             ? <span style={{ color: '#f5c842' }}> · ✓ Afgerond</span>
             : <span style={{ color: '#2e8c3e' }}> · 🔴 Live</span>}
         </p>
-        {/* Code en WhatsApp onder */}
-        <div className="flex gap-2 mt-1">
+        {/* Code en WhatsApp compact in één rij */}
+        <div className="flex gap-1.5 items-center justify-center mt-0.5">
           <button
             onClick={copyLink}
-            className="text-xs font-mono px-2 py-1 rounded-lg shrink-0 transition-colors"
+            className="text-xs font-mono px-2 py-0.5 rounded shrink-0 transition-colors"
             style={{ background: '#2c4530', border: '1px solid #243028', color: copied ? '#2e8c3e' : '#6a8870' }}
             title="Kopieer link"
           >
@@ -114,23 +114,23 @@ export default function LeaderboardPage() {
             <a
               href={`https://wa.me/?text=${encodeURIComponent(`Volg live het leaderboard van ${round.courseName}! 🏌️\n${shareUrl}`)}`}
               target="_blank" rel="noopener noreferrer"
-              className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
+              className="flex items-center justify-center w-6 h-6 rounded shrink-0"
               style={{ background: '#25D366', color: '#fff' }}
               title="Deel via WhatsApp"
             >
-              <WhatsAppIcon size={18} />
+              <WhatsAppIcon size={14} />
             </a>
           )}
         </div>
       </div>
 
-      {/* Kolomlabels */}
-      <div className="px-4">
+      {/* Kolomlabels volledige breedte */}
+      <div className="px-4 pb-2">
         <div className="flex items-center px-4 pb-1 text-xs font-semibold uppercase tracking-wide"
              style={{ color: '#4a6450' }}>
-          <span className="w-10">#</span>
+          <span className="w-6">#</span>
           <span className="flex-1">Speler</span>
-          <span className="text-right">{round.scoringSystem === 'stableford' ? 'Punten' : 'Slagen / Par'}</span>
+          <span className="text-right min-w-20">{round.scoringSystem === 'stableford' ? 'Punten' : 'Slagen / Par'}</span>
         </div>
 
         <div className="flex flex-col gap-2">
@@ -196,27 +196,27 @@ function LeaderboardRow({
   const toParColor = toPar < 0 ? '#60a5fa' : toPar === 0 ? '#6a8870' : toPar <= 2 ? '#e8521a' : '#ef4444';
 
   return (
-    <div className="flex items-center rounded-2xl px-4 py-3 gap-3" style={rowStyle}>
+    <div className="flex items-center rounded-2xl px-4 py-2.5 gap-2" style={rowStyle}>
 
-      {/* Positie/medaille + naam samen */}
-      <div className="flex items-center gap-2 flex-1 min-w-0">
-        <div className="shrink-0 text-center w-6">
-          {medal
-            ? <span className="text-xl leading-none">{medal}</span>
-            : <span className="font-bold text-sm" style={{ color: hasScores ? posColor : '#2a3a2e' }}>
-                {hasScores ? position : '—'}
-              </span>
-          }
-        </div>
-        <div className="min-w-0">
-          <span className={`font-semibold truncate block ${position === 1 && hasScores ? 'text-base' : 'text-sm'}`}>
-            {player.name}
-          </span>
-          <span className="text-xs" style={{ color: '#4a6450' }}>
-            {hasScores ? `${holesPlayed}/${player.scores.length} holes` : 'Nog niet gespeeld'}
-            {player.handicap > 0 && ` · HCP ${player.handicap}`}
-          </span>
-        </div>
+      {/* Positie/medaille */}
+      <div className="shrink-0 text-center w-6">
+        {medal
+          ? <span className="text-xl leading-none">{medal}</span>
+          : <span className="font-bold text-sm" style={{ color: hasScores ? posColor : '#2a3a2e' }}>
+              {hasScores ? position : '—'}
+            </span>
+        }
+      </div>
+
+      {/* Naam + voortgang */}
+      <div className="flex-1 min-w-0">
+        <span className={`font-semibold truncate block ${position === 1 && hasScores ? 'text-base' : 'text-sm'}`}>
+          {player.name}
+        </span>
+        <span className="text-xs" style={{ color: '#4a6450' }}>
+          {hasScores ? `${holesPlayed}/${player.scores.length} holes` : 'Nog niet gespeeld'}
+          {player.handicap > 0 && ` · HCP ${player.handicap}`}
+        </span>
       </div>
 
       {/* Score met duidelijke labels */}
