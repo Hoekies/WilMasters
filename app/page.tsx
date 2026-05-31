@@ -178,10 +178,10 @@ export default function HomePage() {
               <button
                 key={t}
                 onClick={() => { setTab(t); setError(''); }}
-                className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
+                className={`py-2.5 text-sm font-semibold transition-colors ${
                   tab === t ? 'text-white' : 'text-[#6a8870] hover:bg-[#161d17]'
                 }`}
-                style={tab === t ? { background: '#2e8c3e' } : {}}
+                style={{ flex: t === 'create' ? 2 : 1, ...(tab === t ? { background: '#2e8c3e' } : {}) }}
               >
                 {t === 'create' ? '⛳ Nieuw rondje' : '🔗 Doe mee'}
               </button>
