@@ -25,7 +25,6 @@ export default function HomePage() {
   const [gpsLoading, setGpsLoading] = useState(false);
   const [holes, setHoles] = useState<9 | 18>(18);
   const [scoringSystem, setScoringSystem] = useState<'strokeplay' | 'stableford'>('strokeplay');
-  const [parByHole, setParByHole] = useState<string>('4');
   const [playerRows, setPlayerRows] = useState<{ name: string; handicap: string }[]>([
     { name: '', handicap: '0' },
   ]);
@@ -116,25 +115,11 @@ export default function HomePage() {
       scores: Array(holes).fill(null),
     }));
 
-    // Zet par per hole (aantal getallen gescheiden door spatie/komma)
-    const parArray = parByHole
-      .split(/[\s,]+/)
-      .map((p) => {
-        const num = parseInt(p.trim());
-        return isNaN(num) || num < 3 ? 4 : num;
-      })
-      .slice(0, holes);
-    // Vul aan tot het gewenste aantal holes
-    while (parArray.length < holes) {
-      parArray.push(4);
-    }
-
     const round: Round = {
       courseName: courseName.trim(),
       location: courseLocation.trim() || undefined,
       holes,
       scoringSystem,
-      parByHole: parArray,
       createdAt: Date.now(),
       status: 'active',
       players,
@@ -307,17 +292,6 @@ export default function HomePage() {
                 <div><span className="font-semibold" style={{ color: '#e8521a' }}>Strokeplay</span> — slagen tellen over alle holes. Lage score wint.</div>
               </div>
             )}
-
-            {/* Par per hole */}
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium" style={{ color: '#4a6450' }}>Par per hole (spaties of komma's)</label>
-              <input
-                className="input"
-                placeholder="bijv. 4 3 4 4 5 4 3 4 4... (default: alle 4)"
-                value={parByHole}
-                onChange={(e) => setParByHole(e.target.value)}
-              />
-            </div>
 
             {/* Spelers */}
             <div className="flex flex-col gap-1.5">

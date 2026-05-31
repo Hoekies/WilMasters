@@ -12,6 +12,7 @@ export default function ScorePage() {
   const { roundId } = useParams<{ roundId: string }>();
   const [round, setRound] = useState<Round | null>(null);
   const [allScores, setAllScores] = useState<Record<string, (number | null)[]>>({});
+  const [parByHole, setParByHole] = useState<(number | null)[]>([]);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
@@ -24,6 +25,13 @@ export default function ScorePage() {
       if (!snap.exists()) { setError('Rondje niet gevonden.'); return; }
       const data = { id: snap.id, ...snap.data() } as Round;
       setRound(data);
+      // Initialiseer par
+      if (data.parByHole) {
+        setParByHole(data.parByHole);
+      } else {
+        // Default: alle holes par 4
+        setParByHole(Array(data.holes).fill(4));
+      }
       // Initialiseer scores alleen als ze nog niet gezet zijn
       setAllScores((prev) => {
         const next = { ...prev };
@@ -46,6 +54,13 @@ export default function ScorePage() {
     }));
   }
 
+  function setPar(holeIndex: number, value: string) {
+    const num = parseInt(value);
+    setParByHole((prev) => prev.map((p, i) =>
+      i === holeIndex ? (isNaN(num) || num < 3 ? null : Math.min(num, 8)) : p
+    ));
+  }
+
   async function save() {
     if (!round) return;
     setSaving(true);
@@ -54,7 +69,10 @@ export default function ScorePage() {
         ...p,
         scores: allScores[p.id] ?? p.scores,
       }));
-      await updateDoc(doc(db, 'rounds', roundId), { players: updatedPlayers });
+      await updateDoc(doc(db, 'rounds', roundId), {
+        players: updatedPlayers,
+        parByHole: parByHole,
+      });
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch {
@@ -152,11 +170,28 @@ export default function ScorePage() {
           <tbody>
             {Array.from({ length: round.holes }, (_, i) => {
               const hole = i + 1;
-              const par = getParForHole(hole);
+              const par = parByHole[i] ?? 4;
               return (
                 <tr key={hole} style={{ borderTop: '1px solid #1e2c20', background: i % 2 === 0 ? '#161d17' : '#1f3620' }}>
                   <td className="px-3 py-1.5 font-bold text-sm">{hole}</td>
-                  <td className="px-2 py-1.5 text-center text-sm" style={{ color: '#6a8870' }}>{par}</td>
+                  <td className="px-2 py-1.5 text-center">
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min={3}
+                      max={8}
+                      className="w-10 rounded text-center text-sm font-medium py-1 focus:outline-none focus:ring-1"
+                      style={{
+                        background: '#2c4530',
+                        border: '1px solid #243028',
+                        color: '#fff',
+                        WebkitAppearance: 'none',
+                      }}
+                      value={par ?? ''}
+                      onChange={(e) => setPar(i, e.target.value)}
+                      placeholder="4"
+                    />
+                  </td>
                   {activePlayers.map((p) => {
                     const score = allScores[p.id]?.[i] ?? null;
                     const diff = score !== null ? score - par : null;
