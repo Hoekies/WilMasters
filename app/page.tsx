@@ -209,96 +209,82 @@ export default function HomePage() {
 
       {/* Scrollbaar formulier */}
       <div className="flex-1 min-h-0 overflow-y-auto w-full">
-        <div className="w-full max-w-lg mx-auto px-4 flex flex-col gap-3 py-2">
+        <div className="w-full max-w-lg mx-auto px-4 flex flex-col gap-2 py-2">
         {tab === 'create' ? (
           <>
-            {/* Baan + instellingen */}
-            <div className="card flex flex-col gap-4">
-              <div className="flex flex-col gap-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-[#6a8870] uppercase tracking-wide">Golfbaan</label>
-                  <button
-                    type="button"
-                    onClick={detectLocationByGPS}
-                    disabled={gpsLoading}
-                    className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
-                    style={{ background: '#0e160f', border: '1px solid #243028', color: '#6a8870' }}
-                  >
-                    {gpsLoading ? '⏳' : '📍'} {gpsLoading ? 'Zoeken...' : 'GPS'}
-                  </button>
-                </div>
+            {/* Golfbaan sectie */}
+            <div className="flex flex-col gap-2">
+              <p className="text-xs font-medium" style={{ color: '#4a6450' }}>Golfbaan</p>
+
+              {/* Baannaam met GPS icoon erin */}
+              <div className="relative">
                 <input
-                  className="input"
+                  className="input pr-12"
                   placeholder="Naam van de golfbaan"
                   value={courseName}
                   onChange={(e) => setCourseName(e.target.value)}
                   list="course-suggestions"
                   autoComplete="off"
                 />
+                <button
+                  type="button"
+                  onClick={detectLocationByGPS}
+                  disabled={gpsLoading}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-base w-8 h-8 flex items-center justify-center rounded-lg transition-colors disabled:opacity-40"
+                  style={{ color: gpsLoading ? '#4a6450' : '#2e8c3e' }}
+                  title="GPS gebruiken"
+                >
+                  {gpsLoading ? '⏳' : '📍'}
+                </button>
                 {knownCourses.length > 0 && (
                   <datalist id="course-suggestions">
                     {knownCourses.map((c) => <option key={c} value={c} />)}
                   </datalist>
                 )}
-                <input
-                  className="input"
-                  placeholder="Plaats (bijv. Oirschot)"
-                  value={courseLocation}
-                  onChange={(e) => setCourseLocation(e.target.value)}
-                />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-[#6a8870] uppercase tracking-wide">Holes</label>
-                  <select className="input" value={holes} onChange={(e) => setHoles(Number(e.target.value) as 9 | 18)}>
-                    <option value={18}>18 holes</option>
-                    <option value={9}>9 holes</option>
-                  </select>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center gap-1.5">
-                    <label className="text-xs font-semibold text-[#6a8870] uppercase tracking-wide">Systeem</label>
-                    <button
-                      type="button"
-                      onClick={() => setShowScoringInfo((v) => !v)}
-                      className="w-4 h-4 rounded-full text-[10px] font-bold leading-none flex items-center justify-center shrink-0 transition-colors"
-                      style={{ background: '#243028', color: '#6a8870' }}
-                      title="Uitleg scoring"
-                    >
-                      ?
-                    </button>
-                  </div>
-                  <select className="input" value={scoringSystem} onChange={(e) => setScoringSystem(e.target.value as 'strokeplay' | 'stableford')}>
-                    <option value="stableford">Stableford</option>
-                    <option value="strokeplay">Strokeplay</option>
-                  </select>
-                  {showScoringInfo && (
-                    <div className="rounded-xl p-3 mt-1 text-xs flex flex-col gap-2 leading-relaxed"
-                         style={{ background: '#0e160f', border: '1px solid #243028', color: '#a0c8a0' }}>
-                      <div>
-                        <span className="font-bold" style={{ color: '#f5c842' }}>Stableford</span>
-                        {' '}— je scoort punten per hole op basis van je handicap. Par = 2 punten, birdie = 3, bogey = 1. Hoge score wint. Minder erg als je een slechte hole hebt.
-                      </div>
-                      <div>
-                        <span className="font-bold" style={{ color: '#e8521a' }}>Strokeplay</span>
-                        {' '}— gewoon slagen tellen over alle holes. Lage score wint. Klassiek toernooi-formaat.
-                      </div>
-                    </div>
-                  )}
-                </div>
+              <input
+                className="input"
+                placeholder="Plaats"
+                value={courseLocation}
+                onChange={(e) => setCourseLocation(e.target.value)}
+              />
+            </div>
+
+            {/* Holes + Systeem */}
+            <div className="grid grid-cols-2 gap-2">
+              <select className="input" value={holes} onChange={(e) => setHoles(Number(e.target.value) as 9 | 18)}>
+                <option value={18}>18 holes</option>
+                <option value={9}>9 holes</option>
+              </select>
+              <div className="flex gap-1">
+                <select className="input flex-1" value={scoringSystem} onChange={(e) => setScoringSystem(e.target.value as 'strokeplay' | 'stableford')}>
+                  <option value="strokeplay">Strokeplay</option>
+                  <option value="stableford">Stableford</option>
+                </select>
+                <button
+                  type="button"
+                  onClick={() => setShowScoringInfo((v) => !v)}
+                  className="w-10 rounded-xl text-sm font-bold shrink-0"
+                  style={{ background: showScoringInfo ? '#2e8c3e' : '#161d17', border: '1px solid #243028', color: showScoringInfo ? '#fff' : '#6a8870' }}
+                >?</button>
               </div>
             </div>
 
+            {showScoringInfo && (
+              <div className="rounded-xl px-3 py-2.5 text-xs flex flex-col gap-1.5 leading-relaxed"
+                   style={{ background: '#0e160f', border: '1px solid #243028', color: '#6a8870' }}>
+                <div><span className="font-semibold" style={{ color: '#f5c842' }}>Stableford</span> — punten per hole op basis van handicap. Hoge score wint.</div>
+                <div><span className="font-semibold" style={{ color: '#e8521a' }}>Strokeplay</span> — slagen tellen over alle holes. Lage score wint.</div>
+              </div>
+            )}
+
             {/* Spelers */}
-            <div className="card flex flex-col gap-2">
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8870' }}>
-                  Spelers
-                </label>
-                {scoringSystem === 'stableford' && (
-                  <span className="text-xs" style={{ color: '#4a6450' }}>naam · handicap</span>
-                )}
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-medium" style={{ color: '#4a6450' }}>
+                  Spelers{scoringSystem === 'stableford' && <span style={{ color: '#364836' }}> · handicap</span>}
+                </p>
               </div>
               {knownPlayers.length > 0 && (
                 <datalist id="player-suggestions">
@@ -306,57 +292,44 @@ export default function HomePage() {
                 </datalist>
               )}
               {playerRows.map((row, i) => (
-                <div key={i} className="flex gap-2 items-center rounded-xl px-3 py-2" style={{ background: '#0e160f', border: '1px solid #1e2c20' }}>
-                  <span className="text-xs font-bold w-5 text-center shrink-0" style={{ color: '#2e8c3e' }}>{i + 1}</span>
+                <div key={i} className="flex gap-2 items-center rounded-xl px-3 py-2.5" style={{ background: '#111811', border: '1px solid #1a2218' }}>
+                  <span className="text-xs font-bold w-4 shrink-0 text-center" style={{ color: '#2e8c3e' }}>{i + 1}</span>
                   <input
-                    className="flex-1 bg-transparent text-sm text-white placeholder-[#2a3a2e] focus:outline-none"
-                    placeholder={`Naam speler ${i + 1}`}
+                    className="flex-1 bg-transparent text-sm text-white focus:outline-none"
+                    placeholder={`Speler ${i + 1}`}
                     value={row.name}
                     onChange={(e) => updatePlayer(i, 'name', e.target.value)}
                     list="player-suggestions"
                     autoComplete="off"
+                    style={{ color: '#e0e0e0' }}
                   />
                   {scoringSystem === 'stableford' && (
                     <input
-                      className="w-14 bg-transparent text-center text-sm text-white placeholder-[#2a3a2e] focus:outline-none rounded-lg py-0.5"
-                      style={{ border: '1px solid #243028' }}
+                      className="w-12 bg-transparent text-center text-sm focus:outline-none rounded-lg py-0.5"
+                      style={{ border: '1px solid #243028', color: '#e0e0e0' }}
                       placeholder="HCP"
-                      type="number"
-                      min={0}
-                      max={54}
+                      type="number" min={0} max={54}
                       value={row.handicap}
                       onChange={(e) => updatePlayer(i, 'handicap', e.target.value)}
                     />
                   )}
                   {playerRows.length > 1 && (
-                    <button
-                      onClick={() => removePlayer(i)}
-                      className="text-xl leading-none w-6 shrink-0 transition-colors"
-                      style={{ color: '#2a3a2e' }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = '#e8521a')}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = '#2a3a2e')}
-                    >
-                      ×
-                    </button>
+                    <button onClick={() => removePlayer(i)} className="text-lg leading-none w-5 shrink-0" style={{ color: '#2a3830' }}>×</button>
                   )}
                 </div>
               ))}
               {playerRows.length < 30 && (
-                <button
-                  onClick={addPlayer}
-                  className="text-sm font-semibold rounded-xl px-4 py-2 transition-colors mt-1"
-                  style={{ background: '#0e160f', border: '1px solid #2e8c3e', color: '#2e8c3e' }}
-                >
-                  + Speler toevoegen
+                <button onClick={addPlayer} className="self-start flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium transition-colors"
+                  style={{ background: '#111811', border: '1px solid #243028', color: '#2e8c3e' }}>
+                  <span className="text-base leading-none">+</span> Speler
                 </button>
               )}
             </div>
-
           </>
         ) : (
-          <div className="card flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-[#6a8870] uppercase tracking-wide">Rondje-code</label>
+              <p className="text-xs font-medium" style={{ color: '#4a6450' }}>Rondje-code</p>
               <input
                 className="input text-center text-2xl tracking-[0.3em] uppercase font-bold"
                 placeholder="ABCDEF"
