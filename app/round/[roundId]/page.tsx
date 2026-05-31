@@ -189,13 +189,13 @@ function LeaderboardRow({
   const toParColor = toPar < 0 ? '#60a5fa' : toPar === 0 ? '#6a8870' : toPar <= 2 ? '#e8521a' : '#ef4444';
 
   return (
-    <div className="flex items-center rounded-2xl px-4 py-2.5 gap-3" style={rowStyle}>
+    <div className="flex items-center rounded-2xl px-4 py-3 gap-3" style={rowStyle}>
 
-      {/* Positie/medaille links klein */}
-      <div className="shrink-0 text-center w-5">
+      {/* Positie/medaille boven elkaar */}
+      <div className="shrink-0 flex flex-col items-center gap-1">
         {medal
-          ? <span className="text-lg leading-none">{medal}</span>
-          : <span className="font-bold text-xs" style={{ color: hasScores ? posColor : '#2a3a2e' }}>
+          ? <span className="text-4xl leading-none">{medal}</span>
+          : <span className="font-bold text-sm" style={{ color: hasScores ? posColor : '#2a3a2e' }}>
               {hasScores ? position : '—'}
             </span>
         }
