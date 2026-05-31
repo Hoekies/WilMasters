@@ -250,7 +250,7 @@ export default function AgendaPage() {
         <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center px-4 pb-4"
              style={{ background: 'rgba(0,0,0,0.7)' }}
              onClick={(e) => e.target === e.currentTarget && closeModal()}>
-          <div className="w-full max-w-md rounded-2xl flex flex-col gap-4 p-5 max-h-[90vh] overflow-y-auto"
+          <div className="w-full max-w-xs rounded-2xl flex flex-col gap-3 p-4 max-h-[90vh] overflow-y-auto"
                style={{ background: '#131a14', border: '1px solid #243028' }}>
             <div className="flex items-center justify-between">
               <h2 className="font-bold">{modal.editing ? 'Bewerken' : 'Toevoegen'}</h2>
@@ -264,7 +264,7 @@ export default function AgendaPage() {
               </label>
               {finalImage ? (
                 <div className="relative">
-                  <div className="w-full aspect-square rounded-xl overflow-hidden">
+                  <div className="w-full aspect-square rounded-lg overflow-hidden" style={{ maxHeight: '200px' }}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={finalImage} alt="preview" className="w-full h-full object-cover" />
                   </div>
@@ -279,10 +279,10 @@ export default function AgendaPage() {
                 </div>
               ) : (
                 <button onClick={() => fileRef.current?.click()}
-                  className="w-full aspect-square rounded-xl flex flex-col items-center justify-center gap-2 text-sm transition-colors"
+                  className="w-full rounded-lg flex flex-col items-center justify-center gap-1.5 text-xs transition-colors py-6"
                   style={{ background: '#2c4530', border: '2px dashed #243028', color: '#4a6450' }}>
-                  <span className="text-3xl">📷</span>
-                  <span>Afbeelding kiezen</span>
+                  <span className="text-2xl">📷</span>
+                  <span>Foto kiezen</span>
                 </button>
               )}
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
