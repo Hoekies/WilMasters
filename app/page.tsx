@@ -314,13 +314,13 @@ export default function HomePage() {
                     />
                   )}
                   {playerRows.length > 1 && (
-                    <button onClick={() => removePlayer(i)} className="text-lg leading-none w-5 shrink-0" style={{ color: '#2a3830' }}>×</button>
+                    <button onClick={() => removePlayer(i)} className="text-lg leading-none w-5 shrink-0" style={{ color: '#6a8870' }}>×</button>
                   )}
                 </div>
               ))}
               {playerRows.length < 30 && (
                 <button onClick={addPlayer} className="self-start flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium transition-colors"
-                  style={{ background: '#4a6e4a', border: '1px solid #243028', color: '#2e8c3e' }}>
+                  style={{ background: '#4a6e4a', border: '1px solid #5a8a5a', color: '#f0f0f0' }}>
                   <span className="text-base leading-none">+</span> Speler
                 </button>
               )}
