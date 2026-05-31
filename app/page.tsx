@@ -325,19 +325,19 @@ export default function HomePage() {
               <button
                 onClick={createRound}
                 disabled={loading}
-                className="flex flex-col items-center justify-center gap-1 rounded-xl py-3 font-semibold text-sm transition-colors disabled:opacity-40"
+                className="flex items-center justify-center gap-2 rounded-xl px-3 py-2 font-semibold text-sm transition-colors disabled:opacity-40"
                 style={{ background: '#3d9a3d', color: '#fff' }}
               >
-                <span className="text-2xl leading-none">{loading ? '⏳' : '🏌️'}</span>
-                <span className="text-xs text-center leading-tight">{loading ? '...' : 'Rondje starten'}</span>
+                <span className="text-3xl leading-none shrink-0">{loading ? '⏳' : '🏌️'}</span>
+                <span className="text-xs leading-tight">{loading ? '...' : 'Rondje starten'}</span>
               </button>
               <a
                 href="/history"
-                className="flex flex-col items-center justify-center gap-1 rounded-xl py-3 font-semibold text-sm"
+                className="flex items-center justify-center gap-2 rounded-xl px-3 py-2 font-semibold text-sm"
                 style={{ background: '#f5c842', color: '#1c3a1c' }}
               >
-                <span className="text-2xl leading-none">🏆</span>
-                <span className="text-xs text-center leading-tight">Voorgaande edities</span>
+                <span className="text-3xl leading-none shrink-0">🏆</span>
+                <span className="text-xs leading-tight">Voorgaande edities</span>
               </a>
             </div>
           </>
