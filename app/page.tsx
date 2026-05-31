@@ -292,7 +292,7 @@ export default function HomePage() {
                 </datalist>
               )}
               {playerRows.map((row, i) => (
-                <div key={i} className="flex gap-2 items-center rounded-xl px-3 py-2" style={{ background: '#b8b8b8', border: '1px solid #c8dcc8' }}>
+                <div key={i} className="flex gap-2 items-center rounded-xl px-3 py-2" style={{ background: '#4a6e4a', border: '1px solid #c8dcc8' }}>
                   <span className="text-xs font-bold w-4 shrink-0 text-center" style={{ color: '#2e8c3e' }}>{i + 1}</span>
                   <input
                     className="flex-1 bg-transparent text-sm focus:outline-none"
@@ -320,7 +320,7 @@ export default function HomePage() {
               ))}
               {playerRows.length < 30 && (
                 <button onClick={addPlayer} className="self-start flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium transition-colors"
-                  style={{ background: '#b8b8b8', border: '1px solid #243028', color: '#2e8c3e' }}>
+                  style={{ background: '#4a6e4a', border: '1px solid #243028', color: '#2e8c3e' }}>
                   <span className="text-base leading-none">+</span> Speler
                 </button>
               )}
