@@ -126,11 +126,21 @@ export default function HomePage() {
     };
 
     try {
-      const docRef = await addDoc(collection(db, 'rounds'), round);
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Request timeout')), 15000)
+      );
+      const docRef = await Promise.race([
+        addDoc(collection(db, 'rounds'), round),
+        timeoutPromise as Promise<any>
+      ]);
       router.push(`/round/${docRef.id}`);
-    } catch {
-      setError('Verbindingsfout. Controleer je Firebase-configuratie.');
+    } catch (err) {
       setLoading(false);
+      const message = err instanceof Error ? err.message : 'Onbekende fout';
+      setError(message === 'Request timeout'
+        ? 'Te lang wachten. Controleer je internetverbinding.'
+        : 'Verbindingsfout. Controleer je Firebase-configuratie.'
+      );
     }
   }
 
