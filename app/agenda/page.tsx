@@ -140,8 +140,8 @@ export default function AgendaPage() {
   }
 
   const now = Date.now();
-  const upcoming = activities.filter((a) => a.dateTime >= now);
-  const past = activities.filter((a) => a.dateTime < now);
+  const upcoming = activities.filter((a) => a.dateTime >= now).sort((a, b) => b.dateTime - a.dateTime);
+  const past = activities.filter((a) => a.dateTime < now).sort((a, b) => b.dateTime - a.dateTime);
 
   return (
     <>
@@ -391,36 +391,33 @@ function ActivityCard({ activity, isAdmin, onEdit, onDelete, isPast = false }:
       )}
 
       <div className="p-3 flex flex-col gap-1.5 flex-1">
-        {/* Datum groot */}
-        <div className="flex items-start justify-between">
-          <div>
-            <span className="text-4xl font-black leading-none" style={{ color: accentColor }}>{day}</span>
-            <div className="text-xs leading-tight" style={{ color: '#6a8870' }}>{month}</div>
-          </div>
+        {/* Datum op één regel */}
+        <div className="flex items-center justify-between">
+          <span className="text-lg font-black leading-none" style={{ color: accentColor }}>{day} {month}</span>
           {isAdmin && !activity.image && (
             <div className="flex gap-1">
               <button onClick={() => onEdit(activity)}
-                className="w-7 h-7 flex items-center justify-center rounded-lg text-xs"
+                className="w-6 h-6 flex items-center justify-center rounded text-xs"
                 style={{ background: '#2c4530', color: '#6a8870' }}>✏️</button>
               <button onClick={() => activity.id && onDelete(activity.id)}
-                className="w-7 h-7 flex items-center justify-center rounded-lg text-xs"
+                className="w-6 h-6 flex items-center justify-center rounded text-xs"
                 style={{ background: '#2c4530', color: '#e8521a' }}>🗑</button>
             </div>
           )}
         </div>
 
-        {/* Info */}
-        <p className="font-bold text-sm leading-tight">{activity.name}</p>
+        {/* Onderwerp gecentreerd */}
+        <p className="font-bold text-sm text-center">{activity.name}</p>
         {activity.description && (
-          <p className="text-xs leading-relaxed" style={{ color: '#6a8870' }}>{activity.description}</p>
+          <p className="text-xs text-center" style={{ color: '#6a8870' }}>{activity.description}</p>
         )}
-        <p className="text-xs capitalize" style={{ color: '#4a6450' }}>{weekday} · {time}</p>
-        {activity.location && (
-          <p className="text-xs" style={{ color: '#4a6450' }}>📍 {activity.location}</p>
-        )}
-        {countdown && (
-          <p className="text-xs font-bold mt-0.5" style={{ color: '#2e8c3e' }}>{countdown}</p>
-        )}
+        {/* Plaats en tijd op één regel */}
+        <div className="flex flex-col gap-0.5 text-xs" style={{ color: '#4a6450' }}>
+          <p className="text-center capitalize">{weekday} · {time}</p>
+          {activity.location && (
+            <p className="text-center">📍 {activity.location}</p>
+          )}
+        </div>
       </div>
     </div>
   );
