@@ -271,8 +271,8 @@ export default function AgendaPage() {
                     Afbeelding <span style={{ color: '#2a3a2e' }}>(optioneel)</span>
                   </label>
                   {finalImage ? (
-                    <div className="relative">
-                      <div className="w-full aspect-square rounded-lg overflow-hidden" style={{ maxHeight: '200px' }}>
+                    <div className="relative w-full">
+                      <div className="w-full aspect-square rounded-lg overflow-hidden">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={finalImage} alt="preview" className="w-full h-full object-cover" />
                       </div>
