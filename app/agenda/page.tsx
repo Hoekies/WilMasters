@@ -390,10 +390,10 @@ function ActivityCard({ activity, isAdmin, onEdit, onDelete, isPast = false }:
         </div>
       )}
 
-      <div className="p-3 flex flex-col gap-2 flex-1">
+      <div className="p-2 flex flex-col gap-1.5 flex-1">
         {/* Datum centraal en breed */}
         <div className="relative text-center">
-          <span className="text-2xl font-black leading-none" style={{ color: accentColor }}>{day} {month}</span>
+          <span className="text-xl font-black leading-none" style={{ color: accentColor }}>{day} {month}</span>
           {isAdmin && !activity.image && (
             <div className="absolute top-0 right-0 flex gap-1">
               <button onClick={() => onEdit(activity)}
@@ -407,12 +407,12 @@ function ActivityCard({ activity, isAdmin, onEdit, onDelete, isPast = false }:
         </div>
 
         {/* Onderwerp gecentreerd */}
-        <p className="font-bold text-sm text-center">{activity.name}</p>
+        <p className="font-bold text-xs text-center">{activity.name}</p>
         {activity.description && (
-          <p className="text-xs text-center" style={{ color: '#6a8870' }}>{activity.description}</p>
+          <p className="text-[10px] text-center" style={{ color: '#6a8870' }}>{activity.description}</p>
         )}
         {/* Plaats links, tijd rechts */}
-        <div className="flex items-center justify-between text-xs" style={{ color: '#4a6450' }}>
+        <div className="flex items-center justify-between text-[10px]" style={{ color: '#4a6450' }}>
           <div className="flex items-center gap-1">
             {activity.location && (
               <>
