@@ -301,12 +301,12 @@ export default function HomePage() {
                     onChange={(e) => updatePlayer(i, 'name', e.target.value)}
                     list="player-suggestions"
                     autoComplete="off"
-                    style={{ color: '#1a2e1a' }}
+                    style={{ color: '#f0f0f0' }}
                   />
                   {scoringSystem === 'stableford' && (
                     <input
                       className="w-12 bg-transparent text-center text-sm focus:outline-none rounded-lg py-0.5"
-                      style={{ border: '1px solid #c8dcc8', color: '#1a2e1a' }}
+                      style={{ border: '1px solid #c8dcc8', color: '#f0f0f0' }}
                       placeholder="HCP"
                       type="number" min={0} max={54}
                       value={row.handicap}
