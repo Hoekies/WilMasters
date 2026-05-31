@@ -138,67 +138,69 @@ export default function AgendaPage() {
   const past = activities.filter((a) => a.dateTime < now);
 
   return (
-    <main className="flex flex-col min-h-screen gap-3 max-w-lg mx-auto w-full sm:max-w-xl">
+    <>
+      <main className="flex flex-col min-h-screen gap-3 max-w-lg mx-auto w-full sm:max-w-xl">
 
-      {/* Logo */}
-      <Link href="/" className="flex justify-center pt-4 px-4">
-        <Image src="/logo-breed.png" alt="Willemien's Masters" width={600} height={180}
-          className="h-auto drop-shadow-lg" style={{ width: '80%', maxWidth: '360px' }} priority />
-      </Link>
+        {/* Logo */}
+        <Link href="/" className="flex justify-center pt-4 px-4">
+          <Image src="/logo-breed.png" alt="Willemien's Masters" width={600} height={180}
+            className="h-auto drop-shadow-lg" style={{ width: '80%', maxWidth: '360px' }} priority />
+        </Link>
 
-      {/* Header */}
-      <div className="px-4 flex items-center justify-between">
-        <h1 className="font-bold text-lg">Agenda</h1>
-        <div className="flex items-center gap-2">
-          {isAdmin && (
-            <>
-              <button onClick={openAdd}
-                className="flex items-center justify-center w-9 h-9 rounded-xl text-xl font-bold transition-colors"
-                style={{ background: '#2e8c3e', color: '#fff' }} title="Toevoegen">＋</button>
-              <button onClick={logout}
+        {/* Header */}
+        <div className="px-4 flex items-center justify-between">
+          <h1 className="font-bold text-lg">Agenda</h1>
+          <div className="flex items-center gap-2">
+            {isAdmin && (
+              <>
+                <button onClick={openAdd}
+                  className="flex items-center justify-center w-9 h-9 rounded-xl text-xl font-bold transition-colors"
+                  style={{ background: '#2e8c3e', color: '#fff' }} title="Toevoegen">＋</button>
+                <button onClick={logout}
+                  className="flex items-center justify-center w-9 h-9 rounded-xl text-sm transition-colors"
+                  style={{ background: '#161d17', border: '1px solid #243028', color: '#6a8870' }} title="Uitloggen">🔓</button>
+              </>
+            )}
+            {!isAdmin && (
+              <button onClick={() => setLoginModal(true)}
                 className="flex items-center justify-center w-9 h-9 rounded-xl text-sm transition-colors"
-                style={{ background: '#161d17', border: '1px solid #243028', color: '#6a8870' }} title="Uitloggen">🔓</button>
+                style={{ background: '#161d17', border: '1px solid #243028', color: '#6a8870' }} title="Inloggen">🔒</button>
+            )}
+            <Link href="/"
+              className="flex items-center justify-center w-9 h-9 rounded-xl text-base"
+              style={{ background: '#161d17', border: '1px solid #243028' }}>🏠</Link>
+          </div>
+        </div>
+
+        {/* Kaarten */}
+        <div className="px-4 flex flex-col gap-4 pb-4">
+          {upcoming.length === 0 && past.length === 0 && (
+            <div className="text-center py-12" style={{ color: '#4a6450' }}>
+              <p className="text-4xl mb-3">📅</p>
+              <p className="text-sm">Nog geen activiteiten gepland.</p>
+              {isAdmin && <p className="text-xs mt-1">Druk op ＋ om iets toe te voegen.</p>}
+            </div>
+          )}
+
+          {upcoming.length > 0 && (
+            <>
+              <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#4a6450' }}>Aankomend</p>
+              <div className="grid grid-cols-2 gap-3">
+                {upcoming.map((a) => <ActivityCard key={a.id} activity={a} isAdmin={isAdmin} onEdit={openEdit} onDelete={setDeleteId} />)}
+              </div>
             </>
           )}
-          {!isAdmin && (
-            <button onClick={() => setLoginModal(true)}
-              className="flex items-center justify-center w-9 h-9 rounded-xl text-sm transition-colors"
-              style={{ background: '#161d17', border: '1px solid #243028', color: '#6a8870' }} title="Inloggen">🔒</button>
+
+          {past.length > 0 && (
+            <>
+              <p className="text-xs font-semibold uppercase tracking-wide mt-2" style={{ color: '#2a3a2e' }}>Geweest</p>
+              <div className="grid grid-cols-2 gap-3 opacity-50">
+                {past.map((a) => <ActivityCard key={a.id} activity={a} isAdmin={isAdmin} onEdit={openEdit} onDelete={setDeleteId} isPast />)}
+              </div>
+            </>
           )}
-          <Link href="/"
-            className="flex items-center justify-center w-9 h-9 rounded-xl text-base"
-            style={{ background: '#161d17', border: '1px solid #243028' }}>🏠</Link>
         </div>
-      </div>
-
-      {/* Kaarten */}
-      <div className="px-4 flex flex-col gap-4 pb-4">
-        {upcoming.length === 0 && past.length === 0 && (
-          <div className="text-center py-12" style={{ color: '#4a6450' }}>
-            <p className="text-4xl mb-3">📅</p>
-            <p className="text-sm">Nog geen activiteiten gepland.</p>
-            {isAdmin && <p className="text-xs mt-1">Druk op ＋ om iets toe te voegen.</p>}
-          </div>
-        )}
-
-        {upcoming.length > 0 && (
-          <>
-            <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#4a6450' }}>Aankomend</p>
-            <div className="grid grid-cols-2 gap-3">
-              {upcoming.map((a) => <ActivityCard key={a.id} activity={a} isAdmin={isAdmin} onEdit={openEdit} onDelete={setDeleteId} />)}
-            </div>
-          </>
-        )}
-
-        {past.length > 0 && (
-          <>
-            <p className="text-xs font-semibold uppercase tracking-wide mt-2" style={{ color: '#2a3a2e' }}>Geweest</p>
-            <div className="grid grid-cols-2 gap-3 opacity-50">
-              {past.map((a) => <ActivityCard key={a.id} activity={a} isAdmin={isAdmin} onEdit={openEdit} onDelete={setDeleteId} isPast />)}
-            </div>
-          </>
-        )}
-      </div>
+      </main>
 
       {/* Login modal */}
       {loginModal && (
@@ -332,7 +334,7 @@ export default function AgendaPage() {
           </div>
         </div>
       )}
-    </main>
+    </>
   );
 }
 
