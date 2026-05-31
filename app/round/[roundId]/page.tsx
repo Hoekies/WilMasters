@@ -85,38 +85,43 @@ export default function LeaderboardPage() {
         />
       </Link>
 
-      {/* Rondje-info */}
-      <div className="px-4 flex items-center justify-between gap-2">
-        <div className="flex-1 min-w-0">
-          <h1 className="font-bold text-lg leading-tight truncate">{round.courseName}</h1>
-          <p className="text-xs mt-0.5" style={{ color: '#6a8870' }}>
-            {round.holes} holes · {round.scoringSystem === 'stableford' ? 'Stableford' : 'Strokeplay'}
-            {round.status === 'finished'
-              ? <span style={{ color: '#f5c842' }}> · ✓ Afgerond</span>
-              : <span style={{ color: '#2e8c3e' }}> · 🔴 Live</span>}
+      {/* Rondje-info gecentreerd */}
+      <div className="px-4 flex flex-col items-center text-center gap-1">
+        <h1 className="font-bold text-xl">{round.courseName}</h1>
+        {round.location && (
+          <p className="text-xs" style={{ color: '#6a8870' }}>
+            {round.location}
           </p>
-        </div>
-        {/* Code als kopieerknop */}
-        <button
-          onClick={copyLink}
-          className="text-xs font-mono px-2 py-1 rounded-lg shrink-0 transition-colors"
-          style={{ background: '#2c4530', border: '1px solid #243028', color: copied ? '#2e8c3e' : '#6a8870' }}
-          title="Kopieer link"
-        >
-          {copied ? '✓' : roundId.slice(0, 8)}
-        </button>
-        {/* WhatsApp compact */}
-        {round.status === 'active' && (
-          <a
-            href={`https://wa.me/?text=${encodeURIComponent(`Volg live het leaderboard van ${round.courseName}! 🏌️\n${shareUrl}`)}`}
-            target="_blank" rel="noopener noreferrer"
-            className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
-            style={{ background: '#25D366', color: '#fff' }}
-            title="Deel via WhatsApp"
-          >
-            <WhatsAppIcon size={18} />
-          </a>
         )}
+        <p className="text-xs" style={{ color: '#6a8870' }}>
+          {round.holes} holes · {round.scoringSystem === 'stableford' ? 'Stableford' : 'Strokeplay'}
+          {round.status === 'finished'
+            ? <span style={{ color: '#f5c842' }}> · ✓ Afgerond</span>
+            : <span style={{ color: '#2e8c3e' }}> · 🔴 Live</span>}
+        </p>
+        {/* Code en WhatsApp onder */}
+        <div className="flex gap-2 mt-1">
+          <button
+            onClick={copyLink}
+            className="text-xs font-mono px-2 py-1 rounded-lg shrink-0 transition-colors"
+            style={{ background: '#2c4530', border: '1px solid #243028', color: copied ? '#2e8c3e' : '#6a8870' }}
+            title="Kopieer link"
+          >
+            {copied ? '✓' : roundId.slice(0, 8)}
+          </button>
+          {/* WhatsApp compact */}
+          {round.status === 'active' && (
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(`Volg live het leaderboard van ${round.courseName}! 🏌️\n${shareUrl}`)}`}
+              target="_blank" rel="noopener noreferrer"
+              className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
+              style={{ background: '#25D366', color: '#fff' }}
+              title="Deel via WhatsApp"
+            >
+              <WhatsAppIcon size={18} />
+            </a>
+          )}
+        </div>
       </div>
 
       {/* Kolomlabels */}
@@ -193,25 +198,25 @@ function LeaderboardRow({
   return (
     <div className="flex items-center rounded-2xl px-4 py-3 gap-3" style={rowStyle}>
 
-      {/* Positie / medaille */}
-      <div className="w-8 shrink-0 text-center">
-        {medal
-          ? <span className="text-2xl leading-none">{medal}</span>
-          : <span className="font-bold text-sm" style={{ color: hasScores ? posColor : '#2a3a2e' }}>
-              {hasScores ? position : '—'}
-            </span>
-        }
-      </div>
-
-      {/* Naam + voortgang */}
-      <div className="flex-1 min-w-0">
-        <span className={`font-semibold truncate block ${position === 1 && hasScores ? 'text-base' : 'text-sm'}`}>
-          {player.name}
-        </span>
-        <span className="text-xs" style={{ color: '#4a6450' }}>
-          {hasScores ? `${holesPlayed}/${player.scores.length} holes` : 'Nog niet gespeeld'}
-          {player.handicap > 0 && ` · HCP ${player.handicap}`}
-        </span>
+      {/* Positie/medaille + naam samen */}
+      <div className="flex items-center gap-2 flex-1 min-w-0">
+        <div className="shrink-0 text-center w-6">
+          {medal
+            ? <span className="text-xl leading-none">{medal}</span>
+            : <span className="font-bold text-sm" style={{ color: hasScores ? posColor : '#2a3a2e' }}>
+                {hasScores ? position : '—'}
+              </span>
+          }
+        </div>
+        <div className="min-w-0">
+          <span className={`font-semibold truncate block ${position === 1 && hasScores ? 'text-base' : 'text-sm'}`}>
+            {player.name}
+          </span>
+          <span className="text-xs" style={{ color: '#4a6450' }}>
+            {hasScores ? `${holesPlayed}/${player.scores.length} holes` : 'Nog niet gespeeld'}
+            {player.handicap > 0 && ` · HCP ${player.handicap}`}
+          </span>
+        </div>
       </div>
 
       {/* Score met duidelijke labels */}
