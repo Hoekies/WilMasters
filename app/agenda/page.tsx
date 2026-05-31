@@ -44,6 +44,7 @@ export default function AgendaPage() {
   const [loginModal, setLoginModal] = useState(false);
   const [loginForm, setLoginForm] = useState({ user: '', pass: '' });
   const [loginError, setLoginError] = useState('');
+  const [saveError, setSaveError] = useState('');
 
   /* image crop state */
   const [rawImage, setRawImage] = useState<string | null>(null);
@@ -80,7 +81,7 @@ export default function AgendaPage() {
 
   function openAdd() {
     if (!isAdmin) { setLoginModal(true); return; }
-    setForm(EMPTY_FORM); setFinalImage(null); setRawImage(null);
+    setForm(EMPTY_FORM); setFinalImage(null); setRawImage(null); setSaveError('');
     setModal({ open: true });
   }
 
@@ -90,7 +91,7 @@ export default function AgendaPage() {
     const pad = (n: number) => String(n).padStart(2, '0');
     const local = `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
     setForm({ name: a.name, description: a.description ?? '', location: a.location ?? '', dateTime: local });
-    setFinalImage(a.image ?? null); setRawImage(null);
+    setFinalImage(a.image ?? null); setRawImage(null); setSaveError('');
     setModal({ open: true, editing: a });
   }
 
@@ -99,20 +100,28 @@ export default function AgendaPage() {
   async function save() {
     if (!form.name.trim() || !form.dateTime) return;
     setSaving(true);
-    const data: Omit<Activity, 'id'> = {
-      name: form.name.trim(),
-      description: form.description.trim() || undefined,
-      location: form.location.trim() || undefined,
-      image: finalImage ?? undefined,
-      dateTime: new Date(form.dateTime).getTime(),
-      createdAt: Date.now(),
-    };
-    if (modal.editing?.id) {
-      await updateDoc(doc(db, 'activities', modal.editing.id), data as Record<string, unknown>);
-    } else {
-      await addDoc(collection(db, 'activities'), data);
+    setSaveError('');
+    try {
+      const data: Omit<Activity, 'id'> = {
+        name: form.name.trim(),
+        description: form.description.trim() || undefined,
+        location: form.location.trim() || undefined,
+        image: finalImage ?? undefined,
+        dateTime: new Date(form.dateTime).getTime(),
+        createdAt: modal.editing?.createdAt ?? Date.now(),
+      };
+      if (modal.editing?.id) {
+        await updateDoc(doc(db, 'activities', modal.editing.id), data as Record<string, unknown>);
+      } else {
+        await addDoc(collection(db, 'activities'), data);
+      }
+      setSaving(false); closeModal();
+    } catch (err) {
+      setSaving(false);
+      const msg = err instanceof Error ? err.message : 'Onbekende fout';
+      console.error('Save error:', msg, err);
+      setSaveError(`Fout: ${msg}`);
     }
-    setSaving(false); closeModal();
   }
 
   async function confirmDelete(id: string) {
@@ -297,6 +306,8 @@ export default function AgendaPage() {
               <textarea className="input resize-none" rows={2} placeholder="Korte omschrijving..."
                 value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} />
             </div>
+
+            {saveError && <p className="text-red-400 text-sm">{saveError}</p>}
 
             <button onClick={save} disabled={saving || !form.name.trim() || !form.dateTime} className="btn-primary">
               {saving ? '...' : modal.editing ? '💾 Opslaan' : '➕ Toevoegen'}
