@@ -6,6 +6,7 @@ import { collection, addDoc, doc, getDoc, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Player, Round } from '@/lib/types';
 import Image from 'next/image';
+import WhatsAppIcon from '@/components/WhatsAppIcon';
 
 
 function generateId(): string {
@@ -300,7 +301,7 @@ export default function HomePage() {
 
         {tab === 'create' ? (
           <>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-4 gap-2">
               <button
                 onClick={createRound}
                 disabled={loading}
@@ -308,7 +309,7 @@ export default function HomePage() {
                 style={{ background: '#3d9a3d', color: '#fff' }}
               >
                 <span className="text-2xl leading-none">{loading ? '⏳' : '🏌️'}</span>
-                <span className="text-xs text-center leading-tight">{loading ? 'Aanmaken...' : 'Rondje starten'}</span>
+                <span className="text-xs text-center leading-tight">{loading ? '...' : 'Rondje starten'}</span>
               </button>
               <a
                 href="/history"
@@ -326,17 +327,16 @@ export default function HomePage() {
                 <span className="text-2xl leading-none">📅</span>
                 <span className="text-xs text-center leading-tight">Agenda</span>
               </a>
+              <a
+                href={`https://wa.me/?text=${waText}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center rounded-xl py-3"
+                style={{ background: '#25D366', color: '#fff' }}
+              >
+                <WhatsAppIcon size={28} />
+              </a>
             </div>
-            <a
-              href={`https://wa.me/?text=${waText}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-3 w-full rounded-xl py-2.5 font-semibold text-sm"
-              style={{ background: '#25D366', color: '#fff' }}
-            >
-              <span className="text-lg leading-none">📲</span>
-              <span>Deel de app via WhatsApp</span>
-            </a>
           </>
         ) : (
           <button onClick={joinRound} disabled={loading} className="btn-primary">

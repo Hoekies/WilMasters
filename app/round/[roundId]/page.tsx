@@ -8,6 +8,7 @@ import { Round, LeaderboardEntry } from '@/lib/types';
 import { buildLeaderboard } from '@/lib/scoring';
 import Image from 'next/image';
 import Link from 'next/link';
+import WhatsAppIcon from '@/components/WhatsAppIcon';
 
 const MEDAL: Record<number, string> = { 1: '🏆', 2: '🥈', 3: '🥉' };
 
@@ -109,11 +110,11 @@ export default function LeaderboardPage() {
           <a
             href={`https://wa.me/?text=${encodeURIComponent(`Volg live het leaderboard van ${round.courseName}! 🏌️\n${shareUrl}`)}`}
             target="_blank" rel="noopener noreferrer"
-            className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0 text-base"
+            className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
             style={{ background: '#25D366', color: '#fff' }}
             title="Deel via WhatsApp"
           >
-            📲
+            <WhatsAppIcon size={18} />
           </a>
         )}
       </div>
