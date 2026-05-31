@@ -85,9 +85,9 @@ export default function LeaderboardPage() {
       </Link>
 
       {/* Rondje-info */}
-      <div className="px-4 flex items-center justify-between">
-        <div>
-          <h1 className="font-bold text-lg leading-tight">{round.courseName}</h1>
+      <div className="px-4 flex items-center justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <h1 className="font-bold text-lg leading-tight truncate">{round.courseName}</h1>
           <p className="text-xs mt-0.5" style={{ color: '#7fbf7f' }}>
             {round.holes} holes · {round.scoringSystem === 'stableford' ? 'Stableford' : 'Strokeplay'}
             {round.status === 'finished'
@@ -95,10 +95,27 @@ export default function LeaderboardPage() {
               : <span style={{ color: '#3d9a3d' }}> · 🔴 Live</span>}
           </p>
         </div>
-        <span className="text-xs font-mono px-2 py-1 rounded-lg"
-              style={{ background: '#1c3a1c', border: '1px solid #3a6b3a', color: '#7fbf7f' }}>
-          {roundId.slice(0, 8)}
-        </span>
+        {/* Code als kopieerknop */}
+        <button
+          onClick={copyLink}
+          className="text-xs font-mono px-2 py-1 rounded-lg shrink-0 transition-colors"
+          style={{ background: '#1c3a1c', border: '1px solid #3a6b3a', color: copied ? '#3d9a3d' : '#7fbf7f' }}
+          title="Kopieer link"
+        >
+          {copied ? '✓' : roundId.slice(0, 8)}
+        </button>
+        {/* WhatsApp compact */}
+        {round.status === 'active' && (
+          <a
+            href={`https://wa.me/?text=${encodeURIComponent(`Volg live het leaderboard van ${round.courseName}! 🏌️\n${shareUrl}`)}`}
+            target="_blank" rel="noopener noreferrer"
+            className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0 text-base"
+            style={{ background: '#25D366', color: '#fff' }}
+            title="Deel via WhatsApp"
+          >
+            📲
+          </a>
+        )}
       </div>
 
       {/* Kolomlabels */}
@@ -123,40 +140,25 @@ export default function LeaderboardPage() {
       </div>
 
       {/* Acties */}
-      <div className="flex flex-col gap-2 px-4 mt-auto pb-2 pt-2" style={{ borderTop: '1px solid #3a6b3a' }}>
-        {round.status === 'active' && (
-          <>
-            <Link href={`/round/${roundId}/score`} className="btn-primary text-center">
-              ✏️ Scores invoeren
-            </Link>
-            <div className="flex gap-2">
-              <a
-                href={`https://wa.me/?text=${encodeURIComponent(`Volg live het leaderboard van ${round.courseName}! 🏌️\n${shareUrl}`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 rounded-xl px-4 py-3.5 text-sm font-semibold text-center"
-                style={{ background: '#25D366', color: '#fff' }}
-              >
-                📲 WhatsApp
-              </a>
-              <button onClick={copyLink} className="btn-secondary flex-1">
-                {copied ? '✓ Gekopieerd!' : '🔗 Link'}
-              </button>
-              <button
-                onClick={finishRound}
-                disabled={finishing}
-                className="flex-1 rounded-xl border px-4 py-3.5 text-sm font-medium"
-                style={{ borderColor: '#7a3a1a', color: '#e8521a' }}
-              >
-                Afsluiten
-              </button>
-            </div>
-          </>
-        )}
-        <Link href="/history" className="text-center text-xs py-1" style={{ color: '#5a8a5a' }}>
-          📋 Bekijk eerdere rondjes
-        </Link>
-      </div>
+      {round.status === 'active' && (
+        <div className="flex gap-2 px-4 pb-3 pt-2" style={{ borderTop: '1px solid #3a6b3a' }}>
+          <Link
+            href={`/round/${roundId}/score`}
+            className="flex-1 flex items-center justify-center rounded-xl py-2.5 text-sm font-semibold"
+            style={{ background: '#3d9a3d', color: '#fff' }}
+          >
+            ✏️ Scores invoeren
+          </Link>
+          <button
+            onClick={finishRound}
+            disabled={finishing}
+            className="rounded-xl px-3 py-2.5 text-sm font-medium"
+            style={{ flex: '0 0 20%', border: '1px solid #7a3a1a', color: '#e8521a' }}
+          >
+            {finishing ? '...' : '✕'}
+          </button>
+        </div>
+      )}
     </main>
   );
 }
