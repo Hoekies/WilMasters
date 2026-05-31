@@ -14,6 +14,7 @@ export interface Round {
   location?: string;
   holes: 9 | 18;
   scoringSystem: ScoringSystem;
+  parByHole?: number[]; // par voor elke hole (default: alle 4)
   createdAt: number;
   finishedAt?: number;
   status: RoundStatus;

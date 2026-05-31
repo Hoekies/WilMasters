@@ -2,24 +2,26 @@ import { Player, LeaderboardEntry, Round } from './types';
 
 const DEFAULT_PAR = 4;
 
-export function getParForHole(hole: number): number {
-  // Placeholder: alle holes par 4. Vervang later met echte baandata.
+export function getParForHole(hole: number, parByHole?: number[]): number {
+  if (parByHole && hole > 0 && hole <= parByHole.length) {
+    return parByHole[hole - 1];
+  }
   return DEFAULT_PAR;
 }
 
-export function getTotalPar(holes: number): number {
-  return Array.from({ length: holes }, (_, i) => getParForHole(i + 1)).reduce((a, b) => a + b, 0);
+export function getTotalPar(holes: number, parByHole?: number[]): number {
+  return Array.from({ length: holes }, (_, i) => getParForHole(i + 1, parByHole)).reduce((a, b) => a + b, 0);
 }
 
 export function calculateStrokeplayTotal(scores: (number | null)[]): number {
   return scores.filter((s): s is number => s !== null).reduce((sum, s) => sum + s, 0);
 }
 
-export function calculateStablefordPoints(scores: (number | null)[], handicap: number, holes: number): number {
+export function calculateStablefordPoints(scores: (number | null)[], handicap: number, holes: number, parByHole?: number[]): number {
   return scores.reduce<number>((total, strokes, index) => {
     if (strokes === null) return total;
     const hole = index + 1;
-    const par = getParForHole(hole);
+    const par = getParForHole(hole, parByHole);
     // Verdeel handicap over holes: extra slag op laagste stroke-index holes
     const extraStrokes = Math.floor(handicap / holes) + (hole <= handicap % holes ? 1 : 0);
     const net = strokes - extraStrokes;
@@ -29,14 +31,14 @@ export function calculateStablefordPoints(scores: (number | null)[], handicap: n
 }
 
 export function buildLeaderboard(round: Round): LeaderboardEntry[] {
-  const { players, holes, scoringSystem } = round;
-  const totalPar = getTotalPar(holes);
+  const { players, holes, scoringSystem, parByHole } = round;
+  const totalPar = getTotalPar(holes, parByHole);
 
   const entries: LeaderboardEntry[] = players.map((player) => {
     const filledScores = player.scores.slice(0, holes);
     const holesPlayed = filledScores.filter((s) => s !== null).length;
     const totalStrokes = calculateStrokeplayTotal(filledScores);
-    const stablefordPoints = calculateStablefordPoints(filledScores, player.handicap, holes);
+    const stablefordPoints = calculateStablefordPoints(filledScores, player.handicap, holes, parByHole);
     const toPar = totalStrokes - totalPar;
 
     return {
