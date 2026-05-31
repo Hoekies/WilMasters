@@ -411,12 +411,17 @@ function ActivityCard({ activity, isAdmin, onEdit, onDelete, isPast = false }:
         {activity.description && (
           <p className="text-xs text-center" style={{ color: '#6a8870' }}>{activity.description}</p>
         )}
-        {/* Plaats en tijd op één regel */}
-        <div className="flex flex-col gap-0.5 text-xs" style={{ color: '#4a6450' }}>
-          <p className="text-center capitalize">{weekday} · {time}</p>
-          {activity.location && (
-            <p className="text-center">📍 {activity.location}</p>
-          )}
+        {/* Plaats links, tijd rechts */}
+        <div className="flex items-center justify-between text-xs" style={{ color: '#4a6450' }}>
+          <div className="flex items-center gap-1">
+            {activity.location && (
+              <>
+                <span>📍</span>
+                <span>{activity.location}</span>
+              </>
+            )}
+          </div>
+          <p className="capitalize">{weekday} · {time}</p>
         </div>
       </div>
     </div>
