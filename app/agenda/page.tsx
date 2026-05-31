@@ -204,8 +204,8 @@ export default function AgendaPage() {
 
       {/* Login modal */}
       {loginModal && (
-        <div className="fixed inset-0 flex items-center justify-center px-6"
-             style={{ background: 'rgba(0,0,0,0.8)', zIndex: 9999 }}
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center px-6"
+             style={{ background: 'rgba(0,0,0,0.8)' }}
              onClick={(e) => e.target === e.currentTarget && setLoginModal(false)}>
           <div className="w-full max-w-xs rounded-2xl p-5 flex flex-col gap-4"
                style={{ background: '#131a14', border: '1px solid #243028' }}>
@@ -226,7 +226,7 @@ export default function AgendaPage() {
 
       {/* Crop modal */}
       {showCrop && rawImage && (
-        <div className="fixed inset-0 flex flex-col" style={{ background: '#000', zIndex: 9999 }}>
+        <div className="fixed inset-0 z-[9999] flex flex-col" style={{ background: '#000' }}>
           <div className="flex-1 relative">
             <Cropper image={rawImage} crop={crop} zoom={zoom} aspect={1}
               onCropChange={setCrop} onZoomChange={setZoom} onCropComplete={onCropComplete} />
@@ -247,8 +247,8 @@ export default function AgendaPage() {
 
       {/* Toevoegen/bewerken modal */}
       {modal.open && (
-        <div className="fixed inset-0 flex items-end sm:items-center justify-center px-4 pb-4"
-             style={{ background: 'rgba(0,0,0,0.7)', zIndex: 9999 }}
+        <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center px-4 pb-4"
+             style={{ background: 'rgba(0,0,0,0.7)' }}
              onClick={(e) => e.target === e.currentTarget && closeModal()}>
           <div className="w-full max-w-md rounded-2xl flex flex-col gap-4 p-5 max-h-[90vh] overflow-y-auto"
                style={{ background: '#131a14', border: '1px solid #243028' }}>
@@ -320,8 +320,8 @@ export default function AgendaPage() {
 
       {/* Verwijder bevestiging */}
       {deleteId && (
-        <div className="fixed inset-0 flex items-center justify-center px-6"
-             style={{ background: 'rgba(0,0,0,0.7)', zIndex: 9999 }}>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center px-6"
+             style={{ background: 'rgba(0,0,0,0.7)' }}>
           <div className="w-full max-w-xs rounded-2xl p-5 flex flex-col gap-4"
                style={{ background: '#131a14', border: '1px solid #7a2a1a' }}>
             <p className="text-sm text-center">Activiteit verwijderen?</p>
