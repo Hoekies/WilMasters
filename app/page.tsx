@@ -171,7 +171,7 @@ export default function HomePage() {
     <main className="flex flex-col h-[100dvh] overflow-hidden items-center">
 
       {/* Vaste header: logo + tabs */}
-      <div className="shrink-0 flex flex-col items-center w-full max-w-lg px-4 pt-3 pb-0">
+      <div className="shrink-0 flex flex-col items-center w-full max-w-lg px-4 pt-6 pb-0">
         <Image
           src="/logo-breed.png"
           alt="Willemien's Masters"
