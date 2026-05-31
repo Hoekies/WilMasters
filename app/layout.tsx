@@ -9,10 +9,6 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://wm2026-opal.vercel.app'),
   title: "Willemien's Masters",
   description: "Live golf score-app voor kleine groepen",
-  icons: {
-    icon: '/favicon.ico',
-    apple: '/icon.png',
-  },
   openGraph: {
     title: "Willemien's Masters",
     description: "Live golf score-app voor kleine groepen",
@@ -28,8 +24,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="nl" className={`${geist.variable} h-full antialiased`} style={{ isolation: 'isolate' }}>
-      <body className="min-h-full flex flex-col font-sans relative" style={{ background: "#2c4530", color: "#e0e0e0" }}>
+    <html lang="nl" className={`${geist.variable} h-full antialiased`}>
+      <body className="min-h-full flex flex-col font-sans" style={{ background: "#2c4530", color: "#e0e0e0" }}>
         {children}
         <Footer />
       </body>

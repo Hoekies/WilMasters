@@ -234,7 +234,7 @@ export default function AgendaPage() {
 
           {/* Crop modal */}
           {showCrop && rawImage && (
-            <div className="fixed inset-0 z-[9999] flex flex-col" style={{ background: '#000' }}>
+            <div className="fixed inset-0 z-[99999] flex flex-col" style={{ background: '#000' }}>
               <div className="flex-1 relative">
                 <Cropper image={rawImage} crop={crop} zoom={zoom} aspect={1}
                   onCropChange={setCrop} onZoomChange={setZoom} onCropComplete={onCropComplete} />
