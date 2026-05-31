@@ -127,7 +127,7 @@ export default function HomePage() {
 
     try {
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Request timeout')), 15000)
+        setTimeout(() => reject(new Error('Request timeout')), 30000)
       );
       const docRef = await Promise.race([
         addDoc(collection(db, 'rounds'), round),
@@ -137,10 +137,14 @@ export default function HomePage() {
     } catch (err) {
       setLoading(false);
       const message = err instanceof Error ? err.message : 'Onbekende fout';
-      setError(message === 'Request timeout'
-        ? 'Te lang wachten. Controleer je internetverbinding.'
-        : 'Verbindingsfout. Controleer je Firebase-configuratie.'
-      );
+      console.error('Rondje starten error:', message, err);
+      if (message === 'Request timeout') {
+        setError('Verbinding traag (30s timeout). Controleer internet. Probeer opnieuw.');
+      } else if (message.includes('permission-denied')) {
+        setError('Geen toegang tot database. Controleer Firebase setup.');
+      } else {
+        setError(`Fout: ${message}`);
+      }
     }
   }
 
