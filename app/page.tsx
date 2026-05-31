@@ -129,19 +129,39 @@ export default function HomePage() {
           className="drop-shadow-xl mb-2 h-auto"
           style={{ width: '80%', maxWidth: '360px' }}
         />
-        <div className="flex rounded-2xl overflow-hidden border border-[#3a6b3a] w-full mb-2">
-          {(['create', 'join'] as const).map((t) => (
-            <button
-              key={t}
-              onClick={() => { setTab(t); setError(''); }}
-              className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
-                tab === t ? 'text-white' : 'text-[#7fbf7f] hover:bg-[#243d24]'
-              }`}
-              style={tab === t ? { background: '#3d9a3d' } : {}}
-            >
-              {t === 'create' ? '⛳ Nieuw rondje' : '🔗 Doe mee'}
-            </button>
-          ))}
+        <div className="flex gap-2 w-full mb-2">
+          {/* Tabs */}
+          <div className="flex rounded-2xl overflow-hidden border border-[#3a6b3a] flex-1 min-w-0">
+            {(['create', 'join'] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => { setTab(t); setError(''); }}
+                className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
+                  tab === t ? 'text-white' : 'text-[#7fbf7f] hover:bg-[#243d24]'
+                }`}
+                style={tab === t ? { background: '#3d9a3d' } : {}}
+              >
+                {t === 'create' ? '⛳ Nieuw rondje' : '🔗 Doe mee'}
+              </button>
+            ))}
+          </div>
+          {/* Agenda icoon */}
+          <a href="/agenda"
+            className="flex items-center justify-center rounded-2xl px-3 shrink-0 transition-colors"
+            style={{ background: '#243d24', border: '1px solid #3a6b3a', color: '#fff' }}
+            title="Agenda"
+          >
+            <span className="text-xl">📅</span>
+          </a>
+          {/* WhatsApp icoon */}
+          <a href={`https://wa.me/?text=${waText}`}
+            target="_blank" rel="noopener noreferrer"
+            className="flex items-center justify-center rounded-2xl px-3 shrink-0"
+            style={{ background: '#25D366', color: '#fff' }}
+            title="Deel via WhatsApp"
+          >
+            <WhatsAppIcon size={20} />
+          </a>
         </div>
       </div>
 
@@ -301,7 +321,7 @@ export default function HomePage() {
 
         {tab === 'create' ? (
           <>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={createRound}
                 disabled={loading}
@@ -318,23 +338,6 @@ export default function HomePage() {
               >
                 <span className="text-2xl leading-none">🏆</span>
                 <span className="text-xs text-center leading-tight">Voorgaande edities</span>
-              </a>
-              <a
-                href="/agenda"
-                className="flex flex-col items-center justify-center gap-1 rounded-xl py-3 font-semibold text-sm"
-                style={{ background: '#243d24', border: '1px solid #3a6b3a', color: '#fff' }}
-              >
-                <span className="text-2xl leading-none">📅</span>
-                <span className="text-xs text-center leading-tight">Agenda</span>
-              </a>
-              <a
-                href={`https://wa.me/?text=${waText}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center rounded-xl py-3"
-                style={{ background: '#25D366', color: '#fff' }}
-              >
-                <WhatsAppIcon size={28} />
               </a>
             </div>
           </>
