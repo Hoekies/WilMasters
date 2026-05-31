@@ -202,7 +202,7 @@ function LeaderboardRow({
       </div>
 
       {/* Naam + voortgang gecentreerd */}
-      <div className="flex-1 text-center">
+      <div className="text-center" style={{ flex: '0.7' }}>
         <span className={`font-semibold block ${position === 1 && hasScores ? 'text-base' : 'text-sm'}`}>
           {player.name}
         </span>
