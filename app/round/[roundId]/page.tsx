@@ -59,13 +59,13 @@ export default function LeaderboardPage() {
   if (error) return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6 gap-4">
       <p className="text-red-400">{error}</p>
-      <Link href="/" style={{ color: '#3d9a3d' }} className="underline">Terug</Link>
+      <Link href="/" style={{ color: '#2e8c3e' }} className="underline">Terug</Link>
     </main>
   );
 
   if (!round) return (
     <main className="flex flex-col items-center justify-center min-h-screen">
-      <p style={{ color: '#7fbf7f' }} className="animate-pulse text-sm">Laden...</p>
+      <p style={{ color: '#6a8870' }} className="animate-pulse text-sm">Laden...</p>
     </main>
   );
 
@@ -89,18 +89,18 @@ export default function LeaderboardPage() {
       <div className="px-4 flex items-center justify-between gap-2">
         <div className="flex-1 min-w-0">
           <h1 className="font-bold text-lg leading-tight truncate">{round.courseName}</h1>
-          <p className="text-xs mt-0.5" style={{ color: '#7fbf7f' }}>
+          <p className="text-xs mt-0.5" style={{ color: '#6a8870' }}>
             {round.holes} holes · {round.scoringSystem === 'stableford' ? 'Stableford' : 'Strokeplay'}
             {round.status === 'finished'
               ? <span style={{ color: '#f5c842' }}> · ✓ Afgerond</span>
-              : <span style={{ color: '#3d9a3d' }}> · 🔴 Live</span>}
+              : <span style={{ color: '#2e8c3e' }}> · 🔴 Live</span>}
           </p>
         </div>
         {/* Code als kopieerknop */}
         <button
           onClick={copyLink}
           className="text-xs font-mono px-2 py-1 rounded-lg shrink-0 transition-colors"
-          style={{ background: '#1c3a1c', border: '1px solid #3a6b3a', color: copied ? '#3d9a3d' : '#7fbf7f' }}
+          style={{ background: '#0e160f', border: '1px solid #243028', color: copied ? '#2e8c3e' : '#6a8870' }}
           title="Kopieer link"
         >
           {copied ? '✓' : roundId.slice(0, 8)}
@@ -122,7 +122,7 @@ export default function LeaderboardPage() {
       {/* Kolomlabels */}
       <div className="px-4">
         <div className="flex items-center px-4 pb-1 text-xs font-semibold uppercase tracking-wide"
-             style={{ color: '#5a8a5a' }}>
+             style={{ color: '#4a6450' }}>
           <span className="w-10">#</span>
           <span className="flex-1">Speler</span>
           <span className="text-right">{round.scoringSystem === 'stableford' ? 'Punten' : 'Slagen / Par'}</span>
@@ -142,11 +142,11 @@ export default function LeaderboardPage() {
 
       {/* Acties */}
       {round.status === 'active' && (
-        <div className="flex gap-2 px-4 pb-3 pt-2" style={{ borderTop: '1px solid #3a6b3a' }}>
+        <div className="flex gap-2 px-4 pb-3 pt-2" style={{ borderTop: '1px solid #243028' }}>
           <Link
             href={`/round/${roundId}/score`}
             className="flex-1 flex items-center justify-center rounded-xl py-2.5 text-sm font-semibold"
-            style={{ background: '#3d9a3d', color: '#fff' }}
+            style={{ background: '#2e8c3e', color: '#fff' }}
           >
             ✏️ Scores invoeren
           </Link>
@@ -178,17 +178,17 @@ function LeaderboardRow({
   const medal = hasScores && position > 0 ? MEDAL[position] : null;
 
   const rowStyle =
-    position === 1 && hasScores ? { background: '#2d3a10', border: '1px solid #8a9a2a' } :
-    position === 2 && hasScores ? { background: '#2a2e38', border: '1px solid #6a7a9a' } :
-    position === 3 && hasScores ? { background: '#2e2018', border: '1px solid #8a6a3a' } :
-    { background: '#243d24', border: '1px solid #3a6b3a' };
+    position === 1 && hasScores ? { background: '#1a2010', border: '1px solid #8a9a2a' } :
+    position === 2 && hasScores ? { background: '#1a1e28', border: '1px solid #6a7a9a' } :
+    position === 3 && hasScores ? { background: '#1e1810', border: '1px solid #8a6a3a' } :
+    { background: '#161d17', border: '1px solid #243028' };
 
   const posColor =
     position === 1 ? '#f5c842' :
     position === 2 ? '#c0c0c0' :
-    position === 3 ? '#cd7f32' : '#5a8a5a';
+    position === 3 ? '#cd7f32' : '#4a6450';
 
-  const toParColor = toPar < 0 ? '#60a5fa' : toPar === 0 ? '#7fbf7f' : toPar <= 2 ? '#e8521a' : '#ef4444';
+  const toParColor = toPar < 0 ? '#60a5fa' : toPar === 0 ? '#6a8870' : toPar <= 2 ? '#e8521a' : '#ef4444';
 
   return (
     <div className="flex items-center rounded-2xl px-4 py-3 gap-3" style={rowStyle}>
@@ -197,7 +197,7 @@ function LeaderboardRow({
       <div className="w-8 shrink-0 text-center">
         {medal
           ? <span className="text-2xl leading-none">{medal}</span>
-          : <span className="font-bold text-sm" style={{ color: hasScores ? posColor : '#3a5a3a' }}>
+          : <span className="font-bold text-sm" style={{ color: hasScores ? posColor : '#2a3a2e' }}>
               {hasScores ? position : '—'}
             </span>
         }
@@ -208,7 +208,7 @@ function LeaderboardRow({
         <span className={`font-semibold truncate block ${position === 1 && hasScores ? 'text-base' : 'text-sm'}`}>
           {player.name}
         </span>
-        <span className="text-xs" style={{ color: '#5a8a5a' }}>
+        <span className="text-xs" style={{ color: '#4a6450' }}>
           {hasScores ? `${holesPlayed}/${player.scores.length} holes` : 'Nog niet gespeeld'}
           {player.handicap > 0 && ` · HCP ${player.handicap}`}
         </span>
@@ -221,19 +221,19 @@ function LeaderboardRow({
             <div className="font-bold text-xl leading-tight" style={{ color: position === 1 && hasScores ? '#f5c842' : '#fff' }}>
               {hasScores ? stablefordPoints : '—'}
             </div>
-            <div className="text-[10px] uppercase tracking-wide" style={{ color: '#5a8a5a' }}>punten</div>
+            <div className="text-[10px] uppercase tracking-wide" style={{ color: '#4a6450' }}>punten</div>
           </>
         ) : (
           <>
             <div className="flex items-baseline justify-end gap-1.5">
-              <span className="text-[10px] uppercase tracking-wide" style={{ color: '#5a8a5a' }}>slagen</span>
+              <span className="text-[10px] uppercase tracking-wide" style={{ color: '#4a6450' }}>slagen</span>
               <span className="font-bold text-xl leading-tight" style={{ color: position === 1 && hasScores ? '#f5c842' : '#fff' }}>
                 {hasScores ? totalStrokes : '—'}
               </span>
             </div>
             {hasScores && (
               <div className="flex items-baseline justify-end gap-1.5">
-                <span className="text-[10px] uppercase tracking-wide" style={{ color: '#5a8a5a' }}>t.o.v. par</span>
+                <span className="text-[10px] uppercase tracking-wide" style={{ color: '#4a6450' }}>t.o.v. par</span>
                 <span className="font-bold text-sm" style={{ color: toParColor }}>
                   {toPar === 0 ? 'E' : toPar > 0 ? `+${toPar}` : toPar}
                 </span>

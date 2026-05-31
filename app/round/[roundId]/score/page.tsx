@@ -66,13 +66,13 @@ export default function ScorePage() {
   if (error) return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6 gap-4">
       <p className="text-red-400">{error}</p>
-      <Link href={`/round/${roundId}`} style={{ color: '#3d9a3d' }} className="underline">Terug naar leaderboard</Link>
+      <Link href={`/round/${roundId}`} style={{ color: '#2e8c3e' }} className="underline">Terug naar leaderboard</Link>
     </main>
   );
 
   if (!round) return (
     <main className="flex flex-col items-center justify-center min-h-screen">
-      <p style={{ color: '#7fbf7f' }} className="animate-pulse text-sm">Laden...</p>
+      <p style={{ color: '#6a8870' }} className="animate-pulse text-sm">Laden...</p>
     </main>
   );
 
@@ -97,14 +97,14 @@ export default function ScorePage() {
         <Link
           href={`/round/${roundId}`}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold shrink-0 transition-colors"
-          style={{ background: '#243d24', border: '1px solid #3a6b3a', color: '#7fbf7f' }}
+          style={{ background: '#161d17', border: '1px solid #243028', color: '#6a8870' }}
         >
           ← Leaderboard
         </Link>
         <div className="flex-1 min-w-0 text-right">
           <p className="text-sm font-semibold truncate">{round.courseName}</p>
           {round.location && (
-            <p className="text-xs truncate" style={{ color: '#5a8a5a' }}>📍 {round.location}</p>
+            <p className="text-xs truncate" style={{ color: '#4a6450' }}>📍 {round.location}</p>
           )}
         </div>
       </div>
@@ -118,8 +118,8 @@ export default function ScorePage() {
               onClick={() => setGroupIndex(i)}
               className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
               style={groupIndex === i
-                ? { background: '#3d9a3d', color: '#fff' }
-                : { background: '#1c3a1c', border: '1px solid #3a6b3a', color: '#7fbf7f' }
+                ? { background: '#2e8c3e', color: '#fff' }
+                : { background: '#0e160f', border: '1px solid #243028', color: '#6a8870' }
               }
             >
               Groep {i + 1}
@@ -129,21 +129,21 @@ export default function ScorePage() {
       )}
 
       {/* Scorekaart */}
-      <div className="overflow-x-auto rounded-2xl" style={{ border: '1px solid #3a6b3a' }}>
+      <div className="overflow-x-auto rounded-2xl" style={{ border: '1px solid #243028' }}>
         <table className="w-full border-collapse text-sm" style={{ minWidth: `${120 + activePlayers.length * 64}px` }}>
           <thead>
-            <tr style={{ background: '#1c3a1c' }}>
+            <tr style={{ background: '#0e160f' }}>
               <th className="text-left px-3 py-2.5 font-semibold text-xs uppercase tracking-wide w-12"
-                  style={{ color: '#5a8a5a' }}>Hole</th>
+                  style={{ color: '#4a6450' }}>Hole</th>
               <th className="text-center px-2 py-2.5 font-semibold text-xs uppercase tracking-wide w-10"
-                  style={{ color: '#5a8a5a' }}>Par</th>
+                  style={{ color: '#4a6450' }}>Par</th>
               {activePlayers.map((p) => (
                 <th key={p.id} className="text-center px-1 py-2.5 font-semibold text-xs">
                   <div className="truncate max-w-[64px] mx-auto" style={{ color: '#fff' }}>
                     {p.name.split(' ')[0]}
                   </div>
                   {p.handicap > 0 && (
-                    <div className="text-[10px] font-normal" style={{ color: '#5a8a5a' }}>HCP {p.handicap}</div>
+                    <div className="text-[10px] font-normal" style={{ color: '#4a6450' }}>HCP {p.handicap}</div>
                   )}
                 </th>
               ))}
@@ -154,15 +154,15 @@ export default function ScorePage() {
               const hole = i + 1;
               const par = getParForHole(hole);
               return (
-                <tr key={hole} style={{ borderTop: '1px solid #2d5a2d', background: i % 2 === 0 ? '#243d24' : '#1f3620' }}>
+                <tr key={hole} style={{ borderTop: '1px solid #1e2c20', background: i % 2 === 0 ? '#161d17' : '#1f3620' }}>
                   <td className="px-3 py-1.5 font-bold text-sm">{hole}</td>
-                  <td className="px-2 py-1.5 text-center text-sm" style={{ color: '#7fbf7f' }}>{par}</td>
+                  <td className="px-2 py-1.5 text-center text-sm" style={{ color: '#6a8870' }}>{par}</td>
                   {activePlayers.map((p) => {
                     const score = allScores[p.id]?.[i] ?? null;
                     const diff = score !== null ? score - par : null;
                     const cellColor = diff === null ? undefined
                       : diff < 0 ? '#1e3a5f'
-                      : diff === 0 ? '#1c3a1c'
+                      : diff === 0 ? '#0e160f'
                       : diff === 1 ? '#3a1f0a'
                       : '#3a0a0a';
                     return (
@@ -175,7 +175,7 @@ export default function ScorePage() {
                           className="w-14 rounded-lg text-center text-sm font-medium py-1.5 focus:outline-none focus:ring-1"
                           style={{
                             background: 'transparent',
-                            border: '1px solid #3a6b3a',
+                            border: '1px solid #243028',
                             color: '#fff',
                             WebkitAppearance: 'none',
                           }}
@@ -191,8 +191,8 @@ export default function ScorePage() {
             })}
 
             {/* Totaalrij */}
-            <tr style={{ borderTop: '2px solid #3a6b3a', background: '#1c3a1c' }}>
-              <td className="px-3 py-2.5 font-bold text-xs uppercase tracking-wide" style={{ color: '#5a8a5a' }} colSpan={2}>Totaal</td>
+            <tr style={{ borderTop: '2px solid #243028', background: '#0e160f' }}>
+              <td className="px-3 py-2.5 font-bold text-xs uppercase tracking-wide" style={{ color: '#4a6450' }} colSpan={2}>Totaal</td>
               {activePlayers.map((p) => {
                 const total = (allScores[p.id] ?? []).filter((s): s is number => s !== null).reduce((a, b) => a + b, 0);
                 const played = (allScores[p.id] ?? []).filter(s => s !== null).length;

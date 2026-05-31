@@ -2,40 +2,37 @@
 
 @theme inline {
   --font-sans: var(--font-geist);
-
-  /* Logo-kleuren */
-  --color-brand-green:     #3d9a3d;
-  --color-brand-green-dark:#1c3a1c;
-  --color-brand-orange:    #e8521a;
-  --color-brand-yellow:    #f5c842;
-  --color-surface:         #243d24;
-  --color-surface-alt:     #1c3a1c;
-  --color-border:          #3a6b3a;
-  --color-text-muted:      #7fbf7f;
 }
 
 @layer components {
   .input {
-    @apply w-full rounded-xl bg-[#1c3a1c] border border-[#3a6b3a] px-4 py-3
-           text-white placeholder-[#5a8a5a]
-           focus:outline-none focus:border-[#3d9a3d] focus:ring-1 focus:ring-[#3d9a3d]
-           text-sm transition-colors;
+    @apply w-full rounded-xl px-4 py-3 text-white text-sm transition-colors focus:outline-none;
+    background: #111811;
+    border: 1px solid #243028;
+    color: #e0e0e0;
   }
+  .input::placeholder { color: #3a4a3e; }
+  .input:focus { border-color: #2e8c3e; box-shadow: 0 0 0 1px #2e8c3e; }
 
   .btn-primary {
-    @apply w-full rounded-xl bg-[#3d9a3d] hover:bg-[#4ab04a] active:bg-[#2d7a2d]
-           disabled:opacity-40 disabled:cursor-not-allowed
-           px-6 py-3.5 font-semibold text-white transition-colors text-sm
-           shadow-lg shadow-[#1c3a1c];
+    @apply w-full rounded-xl px-6 py-3.5 font-semibold text-white text-sm transition-colors shadow-lg;
+    background: #2e8c3e;
   }
+  .btn-primary:hover { background: #37a349; }
+  .btn-primary:active { background: #236e30; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .btn-secondary {
-    @apply w-full rounded-xl border border-[#3a6b3a] hover:bg-[#243d24]
-           disabled:opacity-40 disabled:cursor-not-allowed
-           px-6 py-3.5 font-medium text-[#7fbf7f] transition-colors text-sm;
+    @apply w-full rounded-xl px-6 py-3.5 font-medium text-sm transition-colors;
+    border: 1px solid #2a3830;
+    color: #6a8870;
   }
+  .btn-secondary:hover { background: #161d17; }
+  .btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .card {
-    @apply bg-[#243d24] border border-[#3a6b3a] rounded-2xl p-4;
+    @apply rounded-2xl p-4;
+    background: #161d17;
+    border: 1px solid #1e2c20;
   }
 }

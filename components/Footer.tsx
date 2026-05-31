@@ -9,8 +9,8 @@ export default function Footer() {
     <footer className="w-full max-w-lg mx-auto sm:max-w-xl px-4 pb-6 mt-auto">
       {/* Over-panel */}
       {open && (
-        <div className="mb-3 rounded-2xl overflow-hidden" style={{ border: '1px solid #3a6b3a' }}>
-          <div className="px-4 py-4 flex flex-col gap-2 text-sm leading-relaxed" style={{ color: '#7fbf7f' }}>
+        <div className="mb-3 rounded-2xl overflow-hidden" style={{ border: '1px solid #243028' }}>
+          <div className="px-4 py-4 flex flex-col gap-2 text-sm leading-relaxed" style={{ color: '#6a8870' }}>
             <p>
               Ooit dacht iemand: <em>&ldquo;Laten we een balletje slaan.&rdquo;</em> Dat balletje
               werd een rondje. Dat rondje werd een traditie. Die traditie heeft nu een eigen app.
@@ -27,11 +27,11 @@ export default function Footer() {
 
       {/* Footer balk */}
       <div className="flex items-center justify-between">
-        <span className="text-xs" style={{ color: '#3a5a3a' }}>Hoekies 2026</span>
+        <span className="text-xs" style={{ color: '#2a3a2e' }}>Hoekies 2026</span>
         <button
           onClick={() => setOpen((v) => !v)}
           className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors"
-          style={{ color: '#5a8a5a', border: '1px solid #2d4a2d' }}
+          style={{ color: '#4a6450', border: '1px solid #1a2c1e' }}
         >
           <span>⛳</span>
           <span>Over</span>

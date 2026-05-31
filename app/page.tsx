@@ -173,15 +173,15 @@ export default function HomePage() {
         />
         <div className="flex gap-2 w-full mb-2">
           {/* Tabs */}
-          <div className="flex rounded-2xl overflow-hidden border border-[#3a6b3a] flex-1 min-w-0">
+          <div className="flex rounded-2xl overflow-hidden border border-[#243028] flex-1 min-w-0">
             {(['create', 'join'] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => { setTab(t); setError(''); }}
                 className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
-                  tab === t ? 'text-white' : 'text-[#7fbf7f] hover:bg-[#243d24]'
+                  tab === t ? 'text-white' : 'text-[#6a8870] hover:bg-[#161d17]'
                 }`}
-                style={tab === t ? { background: '#3d9a3d' } : {}}
+                style={tab === t ? { background: '#2e8c3e' } : {}}
               >
                 {t === 'create' ? '⛳ Nieuw rondje' : '🔗 Doe mee'}
               </button>
@@ -190,7 +190,7 @@ export default function HomePage() {
           {/* Agenda icoon */}
           <a href="/agenda"
             className="flex items-center justify-center rounded-2xl px-3 shrink-0 transition-colors"
-            style={{ background: '#243d24', border: '1px solid #3a6b3a', color: '#fff' }}
+            style={{ background: '#161d17', border: '1px solid #243028', color: '#fff' }}
             title="Agenda"
           >
             <span className="text-xl">📅</span>
@@ -216,13 +216,13 @@ export default function HomePage() {
             <div className="card flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-[#7fbf7f] uppercase tracking-wide">Golfbaan</label>
+                  <label className="text-xs font-semibold text-[#6a8870] uppercase tracking-wide">Golfbaan</label>
                   <button
                     type="button"
                     onClick={detectLocationByGPS}
                     disabled={gpsLoading}
                     className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
-                    style={{ background: '#1c3a1c', border: '1px solid #3a6b3a', color: '#7fbf7f' }}
+                    style={{ background: '#0e160f', border: '1px solid #243028', color: '#6a8870' }}
                   >
                     {gpsLoading ? '⏳' : '📍'} {gpsLoading ? 'Zoeken...' : 'GPS'}
                   </button>
@@ -250,7 +250,7 @@ export default function HomePage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-[#7fbf7f] uppercase tracking-wide">Holes</label>
+                  <label className="text-xs font-semibold text-[#6a8870] uppercase tracking-wide">Holes</label>
                   <select className="input" value={holes} onChange={(e) => setHoles(Number(e.target.value) as 9 | 18)}>
                     <option value={18}>18 holes</option>
                     <option value={9}>9 holes</option>
@@ -258,12 +258,12 @@ export default function HomePage() {
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center gap-1.5">
-                    <label className="text-xs font-semibold text-[#7fbf7f] uppercase tracking-wide">Systeem</label>
+                    <label className="text-xs font-semibold text-[#6a8870] uppercase tracking-wide">Systeem</label>
                     <button
                       type="button"
                       onClick={() => setShowScoringInfo((v) => !v)}
                       className="w-4 h-4 rounded-full text-[10px] font-bold leading-none flex items-center justify-center shrink-0 transition-colors"
-                      style={{ background: '#3a6b3a', color: '#7fbf7f' }}
+                      style={{ background: '#243028', color: '#6a8870' }}
                       title="Uitleg scoring"
                     >
                       ?
@@ -275,7 +275,7 @@ export default function HomePage() {
                   </select>
                   {showScoringInfo && (
                     <div className="rounded-xl p-3 mt-1 text-xs flex flex-col gap-2 leading-relaxed"
-                         style={{ background: '#1c3a1c', border: '1px solid #3a6b3a', color: '#a0c8a0' }}>
+                         style={{ background: '#0e160f', border: '1px solid #243028', color: '#a0c8a0' }}>
                       <div>
                         <span className="font-bold" style={{ color: '#f5c842' }}>Stableford</span>
                         {' '}— je scoort punten per hole op basis van je handicap. Par = 2 punten, birdie = 3, bogey = 1. Hoge score wint. Minder erg als je een slechte hole hebt.
@@ -293,11 +293,11 @@ export default function HomePage() {
             {/* Spelers */}
             <div className="card flex flex-col gap-2">
               <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#7fbf7f' }}>
+                <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8870' }}>
                   Spelers
                 </label>
                 {scoringSystem === 'stableford' && (
-                  <span className="text-xs" style={{ color: '#5a8a5a' }}>naam · handicap</span>
+                  <span className="text-xs" style={{ color: '#4a6450' }}>naam · handicap</span>
                 )}
               </div>
               {knownPlayers.length > 0 && (
@@ -306,10 +306,10 @@ export default function HomePage() {
                 </datalist>
               )}
               {playerRows.map((row, i) => (
-                <div key={i} className="flex gap-2 items-center rounded-xl px-3 py-2" style={{ background: '#1c3a1c', border: '1px solid #2d5a2d' }}>
-                  <span className="text-xs font-bold w-5 text-center shrink-0" style={{ color: '#3d9a3d' }}>{i + 1}</span>
+                <div key={i} className="flex gap-2 items-center rounded-xl px-3 py-2" style={{ background: '#0e160f', border: '1px solid #1e2c20' }}>
+                  <span className="text-xs font-bold w-5 text-center shrink-0" style={{ color: '#2e8c3e' }}>{i + 1}</span>
                   <input
-                    className="flex-1 bg-transparent text-sm text-white placeholder-[#3a5a3a] focus:outline-none"
+                    className="flex-1 bg-transparent text-sm text-white placeholder-[#2a3a2e] focus:outline-none"
                     placeholder={`Naam speler ${i + 1}`}
                     value={row.name}
                     onChange={(e) => updatePlayer(i, 'name', e.target.value)}
@@ -318,8 +318,8 @@ export default function HomePage() {
                   />
                   {scoringSystem === 'stableford' && (
                     <input
-                      className="w-14 bg-transparent text-center text-sm text-white placeholder-[#3a5a3a] focus:outline-none rounded-lg py-0.5"
-                      style={{ border: '1px solid #3a6b3a' }}
+                      className="w-14 bg-transparent text-center text-sm text-white placeholder-[#2a3a2e] focus:outline-none rounded-lg py-0.5"
+                      style={{ border: '1px solid #243028' }}
                       placeholder="HCP"
                       type="number"
                       min={0}
@@ -332,9 +332,9 @@ export default function HomePage() {
                     <button
                       onClick={() => removePlayer(i)}
                       className="text-xl leading-none w-6 shrink-0 transition-colors"
-                      style={{ color: '#3a5a3a' }}
+                      style={{ color: '#2a3a2e' }}
                       onMouseEnter={(e) => (e.currentTarget.style.color = '#e8521a')}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = '#3a5a3a')}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = '#2a3a2e')}
                     >
                       ×
                     </button>
@@ -345,7 +345,7 @@ export default function HomePage() {
                 <button
                   onClick={addPlayer}
                   className="text-sm font-semibold rounded-xl px-4 py-2 transition-colors mt-1"
-                  style={{ background: '#1c3a1c', border: '1px solid #3d9a3d', color: '#3d9a3d' }}
+                  style={{ background: '#0e160f', border: '1px solid #2e8c3e', color: '#2e8c3e' }}
                 >
                   + Speler toevoegen
                 </button>
@@ -356,7 +356,7 @@ export default function HomePage() {
         ) : (
           <div className="card flex flex-col gap-3">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-[#7fbf7f] uppercase tracking-wide">Rondje-code</label>
+              <label className="text-xs font-semibold text-[#6a8870] uppercase tracking-wide">Rondje-code</label>
               <input
                 className="input text-center text-2xl tracking-[0.3em] uppercase font-bold"
                 placeholder="ABCDEF"
@@ -364,7 +364,7 @@ export default function HomePage() {
                 onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                 maxLength={20}
               />
-              <p className="text-xs text-[#5a8a5a] text-center mt-1">
+              <p className="text-xs text-[#4a6450] text-center mt-1">
                 Vraag de code bij de score-invoerder of scan de QR-code.
               </p>
             </div>
@@ -375,7 +375,7 @@ export default function HomePage() {
 
       {/* Vaste actieknoppen onderaan */}
       <div className="shrink-0 w-full max-w-lg px-4 pb-3 pt-2 flex flex-col gap-2"
-           style={{ borderTop: '1px solid #2d4a2d' }}>
+           style={{ borderTop: '1px solid #1a2c1e' }}>
         {error && <p className="text-red-400 text-sm text-center">{error}</p>}
 
         {tab === 'create' ? (
@@ -385,7 +385,7 @@ export default function HomePage() {
                 onClick={createRound}
                 disabled={loading}
                 className="flex items-center justify-center gap-2 rounded-xl px-3 py-2 font-semibold text-sm transition-colors disabled:opacity-40"
-                style={{ background: '#3d9a3d', color: '#fff' }}
+                style={{ background: '#2e8c3e', color: '#fff' }}
               >
                 <span className="text-3xl leading-none shrink-0">{loading ? '⏳' : '🏌️'}</span>
                 <span className="text-xs leading-tight">{loading ? '...' : 'Rondje starten'}</span>
@@ -393,7 +393,7 @@ export default function HomePage() {
               <a
                 href="/history"
                 className="flex items-center justify-center gap-2 rounded-xl px-3 py-2 font-semibold text-sm"
-                style={{ background: '#f5c842', color: '#1c3a1c' }}
+                style={{ background: '#f5c842', color: '#0e160f' }}
               >
                 <span className="text-3xl leading-none shrink-0">🏆</span>
                 <span className="text-xs leading-tight">Voorgaande edities</span>

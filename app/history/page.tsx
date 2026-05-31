@@ -67,8 +67,8 @@ export default function HistoryPage() {
             onClick={() => setSelectedCourse(c)}
             className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
             style={selectedCourse === c
-              ? { background: '#3d9a3d', color: '#fff' }
-              : { background: '#1c3a1c', border: '1px solid #3a6b3a', color: '#7fbf7f' }
+              ? { background: '#2e8c3e', color: '#fff' }
+              : { background: '#0e160f', border: '1px solid #243028', color: '#6a8870' }
             }
           >
             {c === 'alle' ? 'Alle banen' : c}
@@ -78,13 +78,13 @@ export default function HistoryPage() {
           {!isAdmin && (
             <button onClick={() => setLoginModal(true)}
               className="flex items-center justify-center w-9 h-9 rounded-xl text-sm"
-              style={{ background: '#243d24', border: '1px solid #3a6b3a', color: '#7fbf7f' }}
+              style={{ background: '#161d17', border: '1px solid #243028', color: '#6a8870' }}
               title="Inloggen">🔒</button>
           )}
           <Link
             href="/"
             className="flex items-center justify-center w-9 h-9 rounded-xl text-base transition-colors"
-            style={{ background: '#243d24', border: '1px solid #3a6b3a' }}
+            style={{ background: '#161d17', border: '1px solid #243028' }}
           >
             🏠
           </Link>
@@ -92,13 +92,13 @@ export default function HistoryPage() {
       </div>
 
       {loading && (
-        <p className="text-center py-10 animate-pulse px-4" style={{ color: '#5a8a5a' }}>Laden...</p>
+        <p className="text-center py-10 animate-pulse px-4" style={{ color: '#4a6450' }}>Laden...</p>
       )}
 
       {!loading && filtered.length === 0 && (
-        <div className="text-center py-10 px-4" style={{ color: '#5a8a5a' }}>
+        <div className="text-center py-10 px-4" style={{ color: '#4a6450' }}>
           <p className="text-lg mb-2">Nog geen afgesloten rondjes</p>
-          <Link href="/" className="text-sm underline" style={{ color: '#3d9a3d' }}>Start een nieuw rondje</Link>
+          <Link href="/" className="text-sm underline" style={{ color: '#2e8c3e' }}>Start een nieuw rondje</Link>
         </div>
       )}
 
@@ -120,10 +120,10 @@ export default function HistoryPage() {
              style={{ background: 'rgba(0,0,0,0.8)' }}
              onClick={(e) => e.target === e.currentTarget && setLoginModal(false)}>
           <div className="w-full max-w-xs rounded-2xl p-5 flex flex-col gap-4"
-               style={{ background: '#1f3a1f', border: '1px solid #3a6b3a' }}>
+               style={{ background: '#131a14', border: '1px solid #243028' }}>
             <div className="flex items-center justify-between">
               <h2 className="font-bold">Inloggen</h2>
-              <button onClick={() => setLoginModal(false)} className="text-2xl" style={{ color: '#7fbf7f' }}>×</button>
+              <button onClick={() => setLoginModal(false)} className="text-2xl" style={{ color: '#6a8870' }}>×</button>
             </div>
             <input className="input" placeholder="Gebruikersnaam" value={loginForm.user}
               onChange={(e) => setLoginForm(f => ({ ...f, user: e.target.value }))} />
@@ -188,7 +188,7 @@ function RoundCard({
       <div className="flex items-start justify-between gap-2">
         <div>
           <h2 className="font-bold text-base">{round.courseName}</h2>
-          <p className="text-xs mt-0.5" style={{ color: '#7fbf7f' }}>
+          <p className="text-xs mt-0.5" style={{ color: '#6a8870' }}>
             {date} · {round.holes} holes · {round.scoringSystem === 'stableford' ? 'Stableford' : 'Strokeplay'}
           </p>
         </div>
@@ -196,7 +196,7 @@ function RoundCard({
           <Link
             href={`/round/${round.id}`}
             className="text-xs px-2 py-1.5 rounded-lg"
-            style={{ background: '#1c3a1c', border: '1px solid #3a6b3a', color: '#7fbf7f' }}
+            style={{ background: '#0e160f', border: '1px solid #243028', color: '#6a8870' }}
           >
             Bekijken
           </Link>
@@ -225,34 +225,34 @@ function RoundCard({
                 onClick={() => setExpandedPlayer(isExpanded ? null : entry.player.name)}
                 className="w-full flex items-center gap-2 text-sm rounded-xl px-3 py-2 transition-colors text-left"
                 style={{
-                  background: isExpanded ? '#2d4a2d' : '#1c3a1c',
-                  border: `1px solid ${isExpanded ? '#3d9a3d' : '#2d5a2d'}`,
+                  background: isExpanded ? '#1a2c1e' : '#0e160f',
+                  border: `1px solid ${isExpanded ? '#2e8c3e' : '#1e2c20'}`,
                 }}
               >
                 <span className="text-base w-6 shrink-0">{i < 3 ? medals[i] : i + 1}</span>
                 <span className="flex-1 font-medium truncate">{entry.player.name}</span>
                 {round.scoringSystem === 'stableford' ? (
                   <span className="font-bold shrink-0" style={{ color: i === 0 ? '#f5c842' : '#fff' }}>
-                    {entry.stablefordPoints} <span className="text-xs font-normal" style={{ color: '#5a8a5a' }}>pt</span>
+                    {entry.stablefordPoints} <span className="text-xs font-normal" style={{ color: '#4a6450' }}>pt</span>
                   </span>
                 ) : (
                   <div className="text-right shrink-0">
                     <span className="font-bold" style={{ color: i === 0 ? '#f5c842' : '#fff' }}>{entry.totalStrokes}</span>
                     <span className="text-xs ml-1" style={{
-                      color: entry.toPar < 0 ? '#60a5fa' : entry.toPar === 0 ? '#7fbf7f' : '#e8521a'
+                      color: entry.toPar < 0 ? '#60a5fa' : entry.toPar === 0 ? '#6a8870' : '#e8521a'
                     }}>
                       ({entry.toPar === 0 ? 'E' : entry.toPar > 0 ? `+${entry.toPar}` : entry.toPar})
                     </span>
                   </div>
                 )}
-                <span className="text-xs ml-1 shrink-0" style={{ color: '#5a8a5a' }}>{isExpanded ? '▲' : '▼'}</span>
+                <span className="text-xs ml-1 shrink-0" style={{ color: '#4a6450' }}>{isExpanded ? '▲' : '▼'}</span>
               </button>
 
               {/* Uitklapbare geschiedenis */}
               {isExpanded && (
-                <div className="mt-1 ml-8 rounded-xl overflow-hidden" style={{ border: '1px solid #3a6b3a' }}>
+                <div className="mt-1 ml-8 rounded-xl overflow-hidden" style={{ border: '1px solid #243028' }}>
                   <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide"
-                       style={{ background: '#1c3a1c', color: '#5a8a5a' }}>
+                       style={{ background: '#0e160f', color: '#4a6450' }}>
                     Vooruitgang op {round.courseName}
                   </div>
                   {history.map((h, idx) => {
@@ -276,11 +276,11 @@ function RoundCard({
                         key={h.roundId}
                         className="flex items-center gap-2 px-3 py-2 text-sm"
                         style={{
-                          background: isThisRound ? '#243d24' : '#1a2e1a',
-                          borderTop: idx > 0 ? '1px solid #2d4a2d' : undefined,
+                          background: isThisRound ? '#161d17' : '#1a2e1a',
+                          borderTop: idx > 0 ? '1px solid #1a2c1e' : undefined,
                         }}
                       >
-                        <span className="flex-1" style={{ color: isThisRound ? '#fff' : '#7fbf7f' }}>{d}</span>
+                        <span className="flex-1" style={{ color: isThisRound ? '#fff' : '#6a8870' }}>{d}</span>
                         {round.scoringSystem === 'stableford' ? (
                           <span className="font-bold" style={{ color: isThisRound ? '#f5c842' : '#fff' }}>
                             {h.entry.stablefordPoints} pt
@@ -288,7 +288,7 @@ function RoundCard({
                         ) : (
                           <span className="font-bold" style={{ color: isThisRound ? '#f5c842' : '#fff' }}>
                             {h.entry.totalStrokes}
-                            <span className="text-xs font-normal ml-1" style={{ color: '#5a8a5a' }}>
+                            <span className="text-xs font-normal ml-1" style={{ color: '#4a6450' }}>
                               ({h.entry.toPar === 0 ? 'E' : h.entry.toPar > 0 ? `+${h.entry.toPar}` : h.entry.toPar})
                             </span>
                           </span>
