@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   collection, query, orderBy, onSnapshot,
   addDoc, updateDoc, deleteDoc, doc,
@@ -36,6 +37,7 @@ const EMPTY_FORM = { name: '', description: '', location: '', dateTime: '' };
 
 export default function AgendaPage() {
   const { isAdmin, login, logout } = useAdmin();
+  const [mounted, setMounted] = useState(false);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [modal, setModal] = useState<{ open: boolean; editing?: Activity }>({ open: false });
   const [form, setForm] = useState(EMPTY_FORM);
@@ -54,6 +56,10 @@ export default function AgendaPage() {
   const [finalImage, setFinalImage] = useState<string | null>(null);
   const [showCrop, setShowCrop] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const q = query(collection(db, 'activities'), orderBy('dateTime', 'asc'));
@@ -202,137 +208,142 @@ export default function AgendaPage() {
         </div>
       </main>
 
-      {/* Login modal */}
-      {loginModal && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center px-6"
-             style={{ background: 'rgba(0,0,0,0.8)' }}
-             onClick={(e) => e.target === e.currentTarget && setLoginModal(false)}>
-          <div className="w-full max-w-xs rounded-2xl p-5 flex flex-col gap-4"
-               style={{ background: '#131a14', border: '1px solid #243028' }}>
-            <div className="flex items-center justify-between">
-              <h2 className="font-bold">Inloggen</h2>
-              <button onClick={() => setLoginModal(false)} className="text-2xl" style={{ color: '#6a8870' }}>×</button>
-            </div>
-            <input className="input" placeholder="Gebruikersnaam" value={loginForm.user}
-              onChange={(e) => setLoginForm(f => ({ ...f, user: e.target.value }))} />
-            <input className="input" type="password" placeholder="Wachtwoord" value={loginForm.pass}
-              onChange={(e) => setLoginForm(f => ({ ...f, pass: e.target.value }))}
-              onKeyDown={(e) => e.key === 'Enter' && doLogin()} />
-            {loginError && <p className="text-red-400 text-sm">{loginError}</p>}
-            <button onClick={doLogin} className="btn-primary">Inloggen</button>
-          </div>
-        </div>
-      )}
-
-      {/* Crop modal */}
-      {showCrop && rawImage && (
-        <div className="fixed inset-0 z-[9999] flex flex-col" style={{ background: '#000' }}>
-          <div className="flex-1 relative">
-            <Cropper image={rawImage} crop={crop} zoom={zoom} aspect={1}
-              onCropChange={setCrop} onZoomChange={setZoom} onCropComplete={onCropComplete} />
-          </div>
-          <div className="p-4 flex flex-col gap-3" style={{ background: '#131a14' }}>
-            <div className="flex items-center gap-3">
-              <span className="text-xs" style={{ color: '#6a8870' }}>Zoom</span>
-              <input type="range" min={1} max={3} step={0.05} value={zoom}
-                onChange={(e) => setZoom(Number(e.target.value))} className="flex-1" />
-            </div>
-            <div className="flex gap-3">
-              <button onClick={() => setShowCrop(false)} className="btn-secondary flex-1">Annuleren</button>
-              <button onClick={confirmCrop} className="btn-primary flex-1">Bevestigen</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Toevoegen/bewerken modal */}
-      {modal.open && (
-        <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center px-4 pb-4"
-             style={{ background: 'rgba(0,0,0,0.7)' }}
-             onClick={(e) => e.target === e.currentTarget && closeModal()}>
-          <div className="w-full max-w-xs rounded-2xl flex flex-col gap-3 p-4 max-h-[90vh] overflow-y-auto"
-               style={{ background: '#131a14', border: '1px solid #243028' }}>
-            <div className="flex items-center justify-between">
-              <h2 className="font-bold">{modal.editing ? 'Bewerken' : 'Toevoegen'}</h2>
-              <button onClick={closeModal} className="text-2xl w-8 flex items-center justify-center" style={{ color: '#6a8870' }}>×</button>
-            </div>
-
-            {/* Afbeelding */}
-            <div className="flex flex-col gap-2">
-              <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8870' }}>
-                Afbeelding <span style={{ color: '#2a3a2e' }}>(optioneel)</span>
-              </label>
-              {finalImage ? (
-                <div className="relative">
-                  <div className="w-full aspect-square rounded-lg overflow-hidden" style={{ maxHeight: '200px' }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={finalImage} alt="preview" className="w-full h-full object-cover" />
-                  </div>
-                  <div className="absolute top-2 right-2 flex gap-1">
-                    <button onClick={() => fileRef.current?.click()}
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
-                      style={{ background: '#2c4530', color: '#6a8870' }}>✏️</button>
-                    <button onClick={() => { setFinalImage(null); setRawImage(null); }}
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
-                      style={{ background: '#2c4530', color: '#e8521a' }}>🗑</button>
-                  </div>
+      {mounted && createPortal(
+        <>
+          {/* Login modal */}
+          {loginModal && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center px-6"
+                 style={{ background: 'rgba(0,0,0,0.8)' }}
+                 onClick={(e) => e.target === e.currentTarget && setLoginModal(false)}>
+              <div className="w-full max-w-xs rounded-2xl p-5 flex flex-col gap-4"
+                   style={{ background: '#131a14', border: '1px solid #243028' }}>
+                <div className="flex items-center justify-between">
+                  <h2 className="font-bold">Inloggen</h2>
+                  <button onClick={() => setLoginModal(false)} className="text-2xl" style={{ color: '#6a8870' }}>×</button>
                 </div>
-              ) : (
-                <button onClick={() => fileRef.current?.click()}
-                  className="w-full rounded-lg flex flex-col items-center justify-center gap-1.5 text-xs transition-colors py-6"
-                  style={{ background: '#2c4530', border: '2px dashed #243028', color: '#4a6450' }}>
-                  <span className="text-2xl">📷</span>
-                  <span>Foto kiezen</span>
+                <input className="input" placeholder="Gebruikersnaam" value={loginForm.user}
+                  onChange={(e) => setLoginForm(f => ({ ...f, user: e.target.value }))} />
+                <input className="input" type="password" placeholder="Wachtwoord" value={loginForm.pass}
+                  onChange={(e) => setLoginForm(f => ({ ...f, pass: e.target.value }))}
+                  onKeyDown={(e) => e.key === 'Enter' && doLogin()} />
+                {loginError && <p className="text-red-400 text-sm">{loginError}</p>}
+                <button onClick={doLogin} className="btn-primary">Inloggen</button>
+              </div>
+            </div>
+          )}
+
+          {/* Crop modal */}
+          {showCrop && rawImage && (
+            <div className="fixed inset-0 z-[9999] flex flex-col" style={{ background: '#000' }}>
+              <div className="flex-1 relative">
+                <Cropper image={rawImage} crop={crop} zoom={zoom} aspect={1}
+                  onCropChange={setCrop} onZoomChange={setZoom} onCropComplete={onCropComplete} />
+              </div>
+              <div className="p-4 flex flex-col gap-3" style={{ background: '#131a14' }}>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs" style={{ color: '#6a8870' }}>Zoom</span>
+                  <input type="range" min={1} max={3} step={0.05} value={zoom}
+                    onChange={(e) => setZoom(Number(e.target.value))} className="flex-1" />
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => setShowCrop(false)} className="btn-secondary flex-1">Annuleren</button>
+                  <button onClick={confirmCrop} className="btn-primary flex-1">Bevestigen</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Toevoegen/bewerken modal */}
+          {modal.open && (
+            <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center px-4 pb-4"
+                 style={{ background: 'rgba(0,0,0,0.7)' }}
+                 onClick={(e) => e.target === e.currentTarget && closeModal()}>
+              <div className="w-full max-w-xs rounded-2xl flex flex-col gap-3 p-4 max-h-[90vh] overflow-y-auto"
+                   style={{ background: '#131a14', border: '1px solid #243028' }}>
+                <div className="flex items-center justify-between">
+                  <h2 className="font-bold">{modal.editing ? 'Bewerken' : 'Toevoegen'}</h2>
+                  <button onClick={closeModal} className="text-2xl w-8 flex items-center justify-center" style={{ color: '#6a8870' }}>×</button>
+                </div>
+
+                {/* Afbeelding */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8870' }}>
+                    Afbeelding <span style={{ color: '#2a3a2e' }}>(optioneel)</span>
+                  </label>
+                  {finalImage ? (
+                    <div className="relative">
+                      <div className="w-full aspect-square rounded-lg overflow-hidden" style={{ maxHeight: '200px' }}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={finalImage} alt="preview" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="absolute top-2 right-2 flex gap-1">
+                        <button onClick={() => fileRef.current?.click()}
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
+                          style={{ background: '#2c4530', color: '#6a8870' }}>✏️</button>
+                        <button onClick={() => { setFinalImage(null); setRawImage(null); }}
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
+                          style={{ background: '#2c4530', color: '#e8521a' }}>🗑</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button onClick={() => fileRef.current?.click()}
+                      className="w-full rounded-lg flex flex-col items-center justify-center gap-1.5 text-xs transition-colors py-6"
+                      style={{ background: '#2c4530', border: '2px dashed #243028', color: '#4a6450' }}>
+                      <span className="text-2xl">📷</span>
+                      <span>Foto kiezen</span>
+                    </button>
+                  )}
+                  <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8870' }}>Naam *</label>
+                  <input className="input" placeholder="bijv. Editie 2026" value={form.name}
+                    onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))} />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8870' }}>Datum & tijd *</label>
+                  <input className="input" type="datetime-local" value={form.dateTime}
+                    onChange={(e) => setForm(f => ({ ...f, dateTime: e.target.value }))} style={{ colorScheme: 'dark' }} />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8870' }}>📍 Locatie <span style={{ color: '#2a3a2e' }}>(optioneel)</span></label>
+                  <input className="input" placeholder="bijv. Oirschot" value={form.location}
+                    onChange={(e) => setForm(f => ({ ...f, location: e.target.value }))} />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8870' }}>Omschrijving <span style={{ color: '#2a3a2e' }}>(optioneel)</span></label>
+                  <textarea className="input resize-none" rows={2} placeholder="Korte omschrijving..."
+                    value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} />
+                </div>
+
+                {saveError && <p className="text-red-400 text-sm">{saveError}</p>}
+
+                <button onClick={save} disabled={saving || !form.name.trim() || !form.dateTime} className="btn-primary">
+                  {saving ? '...' : modal.editing ? '💾 Opslaan' : '➕ Toevoegen'}
                 </button>
-              )}
-              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+              </div>
             </div>
+          )}
 
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8870' }}>Naam *</label>
-              <input className="input" placeholder="bijv. Editie 2026" value={form.name}
-                onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))} />
+          {/* Verwijder bevestiging */}
+          {deleteId && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center px-6"
+                 style={{ background: 'rgba(0,0,0,0.7)' }}>
+              <div className="w-full max-w-xs rounded-2xl p-5 flex flex-col gap-4"
+                   style={{ background: '#131a14', border: '1px solid #7a2a1a' }}>
+                <p className="text-sm text-center">Activiteit verwijderen?</p>
+                <div className="flex gap-3">
+                  <button onClick={() => setDeleteId(null)} className="btn-secondary flex-1">Annuleren</button>
+                  <button onClick={() => confirmDelete(deleteId)}
+                    className="flex-1 rounded-xl py-3 text-sm font-semibold"
+                    style={{ background: '#7a2a1a', color: '#fff' }}>🗑 Verwijderen</button>
+                </div>
+              </div>
             </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8870' }}>Datum & tijd *</label>
-              <input className="input" type="datetime-local" value={form.dateTime}
-                onChange={(e) => setForm(f => ({ ...f, dateTime: e.target.value }))} style={{ colorScheme: 'dark' }} />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8870' }}>📍 Locatie <span style={{ color: '#2a3a2e' }}>(optioneel)</span></label>
-              <input className="input" placeholder="bijv. Oirschot" value={form.location}
-                onChange={(e) => setForm(f => ({ ...f, location: e.target.value }))} />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8870' }}>Omschrijving <span style={{ color: '#2a3a2e' }}>(optioneel)</span></label>
-              <textarea className="input resize-none" rows={2} placeholder="Korte omschrijving..."
-                value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} />
-            </div>
-
-            {saveError && <p className="text-red-400 text-sm">{saveError}</p>}
-
-            <button onClick={save} disabled={saving || !form.name.trim() || !form.dateTime} className="btn-primary">
-              {saving ? '...' : modal.editing ? '💾 Opslaan' : '➕ Toevoegen'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Verwijder bevestiging */}
-      {deleteId && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center px-6"
-             style={{ background: 'rgba(0,0,0,0.7)' }}>
-          <div className="w-full max-w-xs rounded-2xl p-5 flex flex-col gap-4"
-               style={{ background: '#131a14', border: '1px solid #7a2a1a' }}>
-            <p className="text-sm text-center">Activiteit verwijderen?</p>
-            <div className="flex gap-3">
-              <button onClick={() => setDeleteId(null)} className="btn-secondary flex-1">Annuleren</button>
-              <button onClick={() => confirmDelete(deleteId)}
-                className="flex-1 rounded-xl py-3 text-sm font-semibold"
-                style={{ background: '#7a2a1a', color: '#fff' }}>🗑 Verwijderen</button>
-            </div>
-          </div>
-        </div>
+          )}
+        </>,
+        document.body
       )}
     </>
   );
