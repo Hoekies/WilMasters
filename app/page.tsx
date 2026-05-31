@@ -273,7 +273,7 @@ export default function HomePage() {
 
             {showScoringInfo && (
               <div className="rounded-xl px-3 py-2.5 text-xs flex flex-col gap-1.5 leading-relaxed"
-                   style={{ background: '#0e160f', border: '1px solid #243028', color: '#6a8870' }}>
+                   style={{ background: '#1a271a', border: '1px solid #243028', color: '#6a8870' }}>
                 <div><span className="font-semibold" style={{ color: '#f5c842' }}>Stableford</span> — punten per hole op basis van handicap. Hoge score wint.</div>
                 <div><span className="font-semibold" style={{ color: '#e8521a' }}>Strokeplay</span> — slagen tellen over alle holes. Lage score wint.</div>
               </div>
@@ -366,7 +366,7 @@ export default function HomePage() {
               <a
                 href="/history"
                 className="flex items-center justify-center gap-2 rounded-xl px-3 py-2 font-semibold text-sm"
-                style={{ background: '#f5c842', color: '#0e160f' }}
+                style={{ background: '#f5c842', color: '#1a271a' }}
               >
                 <span className="text-3xl leading-none shrink-0">🏆</span>
                 <span className="text-xs leading-tight">Voorgaande edities</span>

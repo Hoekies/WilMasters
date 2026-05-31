@@ -119,7 +119,7 @@ export default function ScorePage() {
               className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
               style={groupIndex === i
                 ? { background: '#2e8c3e', color: '#fff' }
-                : { background: '#0e160f', border: '1px solid #243028', color: '#6a8870' }
+                : { background: '#1a271a', border: '1px solid #243028', color: '#6a8870' }
               }
             >
               Groep {i + 1}
@@ -132,7 +132,7 @@ export default function ScorePage() {
       <div className="overflow-x-auto rounded-2xl" style={{ border: '1px solid #243028' }}>
         <table className="w-full border-collapse text-sm" style={{ minWidth: `${120 + activePlayers.length * 64}px` }}>
           <thead>
-            <tr style={{ background: '#0e160f' }}>
+            <tr style={{ background: '#1a271a' }}>
               <th className="text-left px-3 py-2.5 font-semibold text-xs uppercase tracking-wide w-12"
                   style={{ color: '#4a6450' }}>Hole</th>
               <th className="text-center px-2 py-2.5 font-semibold text-xs uppercase tracking-wide w-10"
@@ -162,7 +162,7 @@ export default function ScorePage() {
                     const diff = score !== null ? score - par : null;
                     const cellColor = diff === null ? undefined
                       : diff < 0 ? '#1e3a5f'
-                      : diff === 0 ? '#0e160f'
+                      : diff === 0 ? '#1a271a'
                       : diff === 1 ? '#3a1f0a'
                       : '#3a0a0a';
                     return (
@@ -191,7 +191,7 @@ export default function ScorePage() {
             })}
 
             {/* Totaalrij */}
-            <tr style={{ borderTop: '2px solid #243028', background: '#0e160f' }}>
+            <tr style={{ borderTop: '2px solid #243028', background: '#1a271a' }}>
               <td className="px-3 py-2.5 font-bold text-xs uppercase tracking-wide" style={{ color: '#4a6450' }} colSpan={2}>Totaal</td>
               {activePlayers.map((p) => {
                 const total = (allScores[p.id] ?? []).filter((s): s is number => s !== null).reduce((a, b) => a + b, 0);

@@ -100,7 +100,7 @@ export default function LeaderboardPage() {
         <button
           onClick={copyLink}
           className="text-xs font-mono px-2 py-1 rounded-lg shrink-0 transition-colors"
-          style={{ background: '#0e160f', border: '1px solid #243028', color: copied ? '#2e8c3e' : '#6a8870' }}
+          style={{ background: '#1a271a', border: '1px solid #243028', color: copied ? '#2e8c3e' : '#6a8870' }}
           title="Kopieer link"
         >
           {copied ? '✓' : roundId.slice(0, 8)}
