@@ -7,7 +7,7 @@
 @layer components {
   .input {
     @apply w-full rounded-xl px-4 py-3 text-sm transition-colors focus:outline-none;
-    background: #ede8dc;
+    background: #f0f0f0;
     border: 1px solid #c8dcc8;
     color: #1a2e1a;
   }
@@ -15,7 +15,7 @@
   .input:focus { border-color: #2e8c3e; box-shadow: 0 0 0 2px rgba(46,140,62,0.2); }
 
   select.input { color: #1a2e1a; }
-  select.input option { background: #ede8dc; color: #1a2e1a; }
+  select.input option { background: #f0f0f0; color: #1a2e1a; }
 
   .btn-primary {
     @apply w-full rounded-xl px-6 py-3.5 font-semibold text-white text-sm transition-colors shadow-lg;
