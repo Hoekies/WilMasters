@@ -10,7 +10,7 @@ export default function SplashPage() {
 
   useEffect(() => {
     const startTime = Date.now();
-    const duration = 4000; // 4 seconds
+    const duration = 3000; // 3 seconds
 
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
@@ -56,7 +56,7 @@ export default function SplashPage() {
 
       {/* Timer text */}
       <div className="mt-8 text-sm text-center" style={{ color: '#6a8870' }}>
-        Laden... {Math.ceil(progress / 100 * 4)}s
+        Laden... {Math.ceil(progress / 100 * 3)}s
       </div>
     </main>
   );
