@@ -10,7 +10,7 @@ export default function SplashPage() {
 
   useEffect(() => {
     const startTime = Date.now();
-    const duration = 3000; // 3 seconds
+    const duration = 3000;
 
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
@@ -29,10 +29,9 @@ export default function SplashPage() {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen w-full"
-          style={{ background: '#2c4530' }}>
+          style={{ background: '#0d150d' }}>
 
-      {/* Logo */}
-      <div className="mb-8">
+      <div className="mb-10">
         <Image
           src="/logo.png"
           alt="Willemien's Masters"
@@ -43,20 +42,18 @@ export default function SplashPage() {
         />
       </div>
 
-      {/* Progress bar */}
-      <div className="w-64 h-1 rounded-full overflow-hidden" style={{ background: '#1a2a1a' }}>
+      <div className="w-56 h-0.5 rounded-full overflow-hidden" style={{ background: '#1c2b1c' }}>
         <div
           className="h-full transition-all duration-100"
           style={{
-            background: '#2e8c3e',
+            background: 'linear-gradient(90deg, #2a8c3a, #c9a227)',
             width: `${progress}%`,
           }}
         />
       </div>
 
-      {/* Timer text */}
-      <div className="mt-8 text-sm text-center" style={{ color: '#6a8870' }}>
-        Laden... {Math.ceil(progress / 100 * 3)}s
+      <div className="mt-6 text-xs text-center tracking-widest uppercase" style={{ color: '#4a664a' }}>
+        Laden
       </div>
     </main>
   );

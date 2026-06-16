@@ -59,20 +59,19 @@ export default function LeaderboardPage() {
   if (error) return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6 gap-4">
       <p className="text-red-400">{error}</p>
-      <Link href="/" style={{ color: '#2e8c3e' }} className="underline">Terug</Link>
+      <Link href="/" style={{ color: '#2a8c3a' }} className="underline">Terug</Link>
     </main>
   );
 
   if (!round) return (
     <main className="flex flex-col items-center justify-center min-h-screen">
-      <p style={{ color: '#6a8870' }} className="animate-pulse text-sm">Laden...</p>
+      <p style={{ color: '#4a664a' }} className="animate-pulse text-sm">Laden...</p>
     </main>
   );
 
   return (
     <main className="flex flex-col min-h-screen gap-4 max-w-lg mx-auto w-full sm:max-w-xl md:max-w-2xl">
 
-      {/* Logo 70% breed */}
       <Link href="/" className="flex justify-center pt-5 px-4">
         <Image
           src="/logo-breed.png"
@@ -85,32 +84,28 @@ export default function LeaderboardPage() {
         />
       </Link>
 
-      {/* Rondje-info volledige breedte */}
-      <div className="px-4 flex flex-col items-center text-center gap-0.5">
+      {/* Rondje-info */}
+      <div className="px-4 flex flex-col items-center text-center gap-1">
         <h1 className="font-bold text-2xl">{round.courseName}</h1>
         {round.location && (
-          <p className="text-xs" style={{ color: '#6a8870' }}>
-            {round.location}
-          </p>
+          <p className="text-xs" style={{ color: '#6a8e6a' }}>{round.location}</p>
         )}
-        <div className="flex items-center justify-center gap-2 w-full">
-          <p className="text-xs" style={{ color: '#6a8870' }}>
+        <div className="flex items-center justify-center gap-2 w-full mt-0.5">
+          <p className="text-xs" style={{ color: '#6a8e6a' }}>
             {round.holes} holes · {round.scoringSystem === 'stableford' ? 'Stableford' : 'Strokeplay'}
             {round.status === 'finished'
-              ? <span style={{ color: '#f5c842' }}> · ✓ Afgerond</span>
-              : <span style={{ color: '#2e8c3e' }}> · 🔴 Live</span>}
+              ? <span style={{ color: '#c9a227' }}> · ✓ Afgerond</span>
+              : <span style={{ color: '#2a8c3a' }}> · 🔴 Live</span>}
           </p>
-          {/* Code rechts */}
           <div className="flex gap-1.5 items-center">
             <button
               onClick={copyLink}
               className="text-xs font-mono px-2 py-0.5 rounded shrink-0 transition-colors"
-              style={{ background: '#2c4530', border: '1px solid #243028', color: copied ? '#2e8c3e' : '#6a8870' }}
+              style={{ background: '#141f14', border: '1px solid #263326', color: copied ? '#2a8c3a' : '#6a8e6a' }}
               title="Kopieer link"
             >
               {copied ? '✓' : roundId.slice(0, 8)}
             </button>
-            {/* WhatsApp compact */}
             {round.status === 'active' && (
               <a
                 href={`https://wa.me/?text=${encodeURIComponent(`Volg live het leaderboard van ${round.courseName}! 🏌️\n${shareUrl}`)}`}
@@ -140,19 +135,19 @@ export default function LeaderboardPage() {
 
       {/* Acties */}
       {round.status === 'active' && (
-        <div className="flex gap-2 px-4 pb-3 pt-2" style={{ borderTop: '1px solid #243028' }}>
+        <div className="flex gap-2 px-4 pb-4 pt-2" style={{ borderTop: '1px solid #1a2a1a' }}>
           <Link
             href={`/round/${roundId}/score`}
-            className="flex-1 flex items-center justify-center rounded-xl py-2.5 text-sm font-semibold"
-            style={{ background: '#2e8c3e', color: '#fff' }}
+            className="flex-1 flex items-center justify-center rounded-xl py-3 text-sm font-semibold"
+            style={{ background: '#2a8c3a', color: '#fff' }}
           >
             ✏️ Scores invoeren
           </Link>
           <button
             onClick={finishRound}
             disabled={finishing}
-            className="rounded-xl px-3 py-2.5 text-sm font-medium"
-            style={{ flex: '0 0 20%', border: '1px solid #7a3a1a', color: '#e8521a' }}
+            className="rounded-xl px-4 py-3 text-sm font-medium transition-colors"
+            style={{ flex: '0 0 20%', border: '1px solid #4a1a0a', color: '#e8521a' }}
           >
             {finishing ? '...' : '✕'}
           </button>
@@ -176,62 +171,62 @@ function LeaderboardRow({
   const medal = hasScores && position > 0 ? MEDAL[position] : null;
 
   const rowStyle =
-    position === 1 && hasScores ? { background: '#1a2010', border: '1px solid #8a9a2a' } :
-    position === 2 && hasScores ? { background: '#1a1e28', border: '1px solid #6a7a9a' } :
-    position === 3 && hasScores ? { background: '#1e1810', border: '1px solid #8a6a3a' } :
-    { background: '#161d17', border: '1px solid #243028' };
+    position === 1 && hasScores
+      ? { background: '#181e08', border: '1px solid #6a5a08' }
+      : position === 2 && hasScores
+      ? { background: '#12181e', border: '1px solid #4a5a6e' }
+      : position === 3 && hasScores
+      ? { background: '#1a130a', border: '1px solid #6a4a1e' }
+      : { background: '#141f14', border: '1px solid #222e22' };
 
   const posColor =
-    position === 1 ? '#f5c842' :
-    position === 2 ? '#c0c0c0' :
-    position === 3 ? '#cd7f32' : '#4a6450';
+    position === 1 ? '#c9a227' :
+    position === 2 ? '#a8b8c8' :
+    position === 3 ? '#b07040' : '#4a664a';
 
-  const toParColor = toPar < 0 ? '#60a5fa' : toPar === 0 ? '#6a8870' : toPar <= 2 ? '#e8521a' : '#ef4444';
+  const toParColor = toPar < 0 ? '#60a5fa' : toPar === 0 ? '#6a8e6a' : toPar <= 2 ? '#e8521a' : '#ef4444';
 
   return (
     <div className="flex items-center rounded-2xl px-4 py-3 gap-3" style={rowStyle}>
 
-      {/* Positie/medaille boven elkaar */}
-      <div className="shrink-0 flex flex-col items-center gap-1">
+      <div className="shrink-0 flex flex-col items-center gap-1 w-8">
         {medal
-          ? <span className="text-4xl leading-none">{medal}</span>
-          : <span className="font-bold text-sm" style={{ color: hasScores ? posColor : '#2a3a2e' }}>
+          ? <span className="text-3xl leading-none">{medal}</span>
+          : <span className="font-bold text-sm" style={{ color: hasScores ? posColor : '#2a3a2a' }}>
               {hasScores ? position : '—'}
             </span>
         }
       </div>
 
-      {/* Naam + voortgang gecentreerd */}
       <div className="text-center" style={{ flex: '0.7' }}>
         <span className={`font-semibold block ${position === 1 && hasScores ? 'text-base' : 'text-sm'}`}>
           {player.name}
         </span>
-        <span className="text-xs" style={{ color: '#4a6450' }}>
+        <span className="text-xs" style={{ color: '#4a664a' }}>
           {hasScores ? `${holesPlayed}/${player.scores.length} holes` : 'Nog niet gespeeld'}
           {player.handicap > 0 && ` · HCP ${player.handicap}`}
         </span>
       </div>
 
-      {/* Score rechts */}
-      <div className="text-right shrink-0 min-w-[60px]">
+      <div className="text-right shrink-0 min-w-[64px]">
         {scoringSystem === 'stableford' ? (
           <>
-            <div className="font-bold text-xl leading-tight" style={{ color: position === 1 && hasScores ? '#f5c842' : '#fff' }}>
+            <div className="font-bold text-xl leading-tight" style={{ color: position === 1 && hasScores ? '#c9a227' : '#e4ebe4' }}>
               {hasScores ? stablefordPoints : '—'}
             </div>
-            <div className="text-[10px] uppercase tracking-wide" style={{ color: '#4a6450' }}>punten</div>
+            <div className="text-[10px] uppercase tracking-wide" style={{ color: '#4a664a' }}>punten</div>
           </>
         ) : (
           <>
             <div className="flex items-baseline justify-end gap-1.5">
-              <span className="text-[10px] uppercase tracking-wide" style={{ color: '#4a6450' }}>slagen</span>
-              <span className="font-bold text-xl leading-tight" style={{ color: position === 1 && hasScores ? '#f5c842' : '#fff' }}>
+              <span className="text-[10px] uppercase tracking-wide" style={{ color: '#4a664a' }}>slagen</span>
+              <span className="font-bold text-xl leading-tight" style={{ color: position === 1 && hasScores ? '#c9a227' : '#e4ebe4' }}>
                 {hasScores ? totalStrokes : '—'}
               </span>
             </div>
             {hasScores && (
               <div className="flex items-baseline justify-end gap-1.5">
-                <span className="text-[10px] uppercase tracking-wide" style={{ color: '#4a6450' }}>t.o.v. par</span>
+                <span className="text-[10px] uppercase tracking-wide" style={{ color: '#4a664a' }}>t.o.v. par</span>
                 <span className="font-bold text-sm" style={{ color: toParColor }}>
                   {toPar === 0 ? 'E' : toPar > 0 ? `+${toPar}` : toPar}
                 </span>

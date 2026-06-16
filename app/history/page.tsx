@@ -41,9 +41,8 @@ export default function HistoryPage() {
   const filtered = selectedCourse === 'alle' ? rounds : rounds.filter((r) => r.courseName === selectedCourse);
 
   return (
-    <main className="flex flex-col min-h-screen gap-2 max-w-lg mx-auto w-full sm:max-w-xl">
+    <main className="flex flex-col min-h-screen gap-3 max-w-lg mx-auto w-full sm:max-w-xl">
 
-      {/* Breed logo */}
       <Link href="/" className="flex justify-center pt-4 px-4">
         <Image
           src="/logo-breed.png"
@@ -56,10 +55,9 @@ export default function HistoryPage() {
         />
       </Link>
 
-      {/* Titel gecentreerd */}
       <h1 className="font-bold text-base sm:text-lg text-center px-4">Voorgaande edities</h1>
 
-      {/* Filters + home-knop op één rij */}
+      {/* Filters */}
       <div className="px-4 flex items-center gap-2 flex-wrap">
         {courses.map((c) => (
           <button
@@ -67,8 +65,8 @@ export default function HistoryPage() {
             onClick={() => setSelectedCourse(c)}
             className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
             style={selectedCourse === c
-              ? { background: '#2e8c3e', color: '#fff' }
-              : { background: '#2c4530', border: '1px solid #243028', color: '#6a8870' }
+              ? { background: '#2a8c3a', color: '#fff' }
+              : { background: '#141f14', border: '1px solid #263326', color: '#6a8e6a' }
             }
           >
             {c === 'alle' ? 'Alle banen' : c}
@@ -78,13 +76,13 @@ export default function HistoryPage() {
           {!isAdmin && (
             <button onClick={() => setLoginModal(true)}
               className="flex items-center justify-center w-9 h-9 rounded-xl text-sm"
-              style={{ background: '#161d17', border: '1px solid #243028', color: '#6a8870' }}
+              style={{ background: '#141f14', border: '1px solid #263326', color: '#6a8e6a' }}
               title="Inloggen">🔒</button>
           )}
           <Link
             href="/"
             className="flex items-center justify-center w-9 h-9 rounded-xl text-base transition-colors"
-            style={{ background: '#161d17', border: '1px solid #243028' }}
+            style={{ background: '#141f14', border: '1px solid #263326' }}
           >
             🏠
           </Link>
@@ -92,13 +90,13 @@ export default function HistoryPage() {
       </div>
 
       {loading && (
-        <p className="text-center py-10 animate-pulse px-4" style={{ color: '#4a6450' }}>Laden...</p>
+        <p className="text-center py-10 animate-pulse px-4" style={{ color: '#4a664a' }}>Laden...</p>
       )}
 
       {!loading && filtered.length === 0 && (
-        <div className="text-center py-10 px-4" style={{ color: '#4a6450' }}>
+        <div className="text-center py-10 px-4" style={{ color: '#4a664a' }}>
           <p className="text-lg mb-2">Nog geen afgesloten rondjes</p>
-          <Link href="/" className="text-sm underline" style={{ color: '#2e8c3e' }}>Start een nieuw rondje</Link>
+          <Link href="/" className="text-sm underline" style={{ color: '#2a8c3a' }}>Start een nieuw rondje</Link>
         </div>
       )}
 
@@ -117,13 +115,13 @@ export default function HistoryPage() {
       {/* Login modal */}
       {loginModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-6"
-             style={{ background: 'rgba(0,0,0,0.8)' }}
+             style={{ background: 'rgba(0,0,0,0.85)' }}
              onClick={(e) => e.target === e.currentTarget && setLoginModal(false)}>
           <div className="w-full max-w-xs rounded-2xl p-5 flex flex-col gap-4"
-               style={{ background: '#131a14', border: '1px solid #243028' }}>
+               style={{ background: '#0d150d', border: '1px solid #263326' }}>
             <div className="flex items-center justify-between">
               <h2 className="font-bold">Inloggen</h2>
-              <button onClick={() => setLoginModal(false)} className="text-2xl" style={{ color: '#6a8870' }}>×</button>
+              <button onClick={() => setLoginModal(false)} className="text-2xl" style={{ color: '#4a664a' }}>×</button>
             </div>
             <input className="input" placeholder="Gebruikersnaam" value={loginForm.user}
               onChange={(e) => setLoginForm(f => ({ ...f, user: e.target.value }))} />
@@ -165,7 +163,6 @@ function RoundCard({
     ? new Date(round.finishedAt).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })
     : new Date(round.createdAt).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' });
 
-  // Alle edities op dezelfde baan + systeem, chronologisch
   function getPlayerHistory(playerName: string) {
     return allRounds
       .filter((r) => r.courseName === round.courseName && r.scoringSystem === round.scoringSystem && r.status === 'finished')
@@ -183,29 +180,30 @@ function RoundCard({
   const medals = ['🏆', '🥈', '🥉'];
 
   return (
-    <div className="card flex flex-col gap-2 p-3">
+    <div className="flex flex-col gap-2 p-3 rounded-2xl"
+         style={{ background: '#141f14', border: '1px solid #222e22' }}>
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <h2 className="font-bold text-sm">{round.courseName}</h2>
           <p className="text-xs mt-0.5">
-            <span className="font-bold" style={{ color: '#f5c842' }}>{date}</span>
-            <span style={{ color: '#6a8870' }}> · {round.holes} holes · {round.scoringSystem === 'stableford' ? 'Stableford' : 'Strokeplay'}</span>
+            <span className="font-bold" style={{ color: '#c9a227' }}>{date}</span>
+            <span style={{ color: '#4a664a' }}> · {round.holes}h · {round.scoringSystem === 'stableford' ? 'SFD' : 'SP'}</span>
           </p>
         </div>
-        <div className="flex gap-2 shrink-0">
+        <div className="flex gap-1.5 shrink-0">
           <Link
             href={`/round/${round.id}`}
-            className="text-xs px-2 py-1.5 rounded-lg"
-            style={{ background: '#2c4530', border: '1px solid #243028', color: '#6a8870' }}
+            className="text-xs px-2 py-1.5 rounded-lg transition-colors"
+            style={{ background: '#1c2b1c', border: '1px solid #2e422e', color: '#7a9c7a' }}
           >
-            Bekijken
+            →
           </Link>
           {isAdmin && (
             <button
               onClick={handleDelete}
               className="text-xs px-2 py-1.5 rounded-lg transition-colors"
-              style={{ border: '1px solid #7a2a1a', color: '#e8521a' }}
+              style={{ border: '1px solid #4a1a0a', color: '#e8521a' }}
             >
               🗑
             </button>
@@ -214,47 +212,45 @@ function RoundCard({
       </div>
 
       {/* Spelers */}
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-1">
         {leaderboard.map((entry, i) => {
           const isExpanded = expandedPlayer === entry.player.name;
           const history = isExpanded ? getPlayerHistory(entry.player.name) : [];
 
           return (
             <div key={entry.player.id}>
-              {/* Spelerrij */}
               <button
                 onClick={() => setExpandedPlayer(isExpanded ? null : entry.player.name)}
-                className="w-full flex items-center gap-2 text-sm rounded-xl px-3 py-2 transition-colors text-left"
+                className="w-full flex items-center gap-2 text-sm rounded-xl px-2.5 py-2 transition-colors text-left"
                 style={{
-                  background: isExpanded ? '#1a2c1e' : '#2c4530',
-                  border: `1px solid ${isExpanded ? '#2e8c3e' : '#1e2c20'}`,
+                  background: isExpanded ? '#0d1a0d' : '#1c2b1c',
+                  border: `1px solid ${isExpanded ? '#2a8c3a' : '#1e2a1e'}`,
                 }}
               >
-                <span className="text-base w-6 shrink-0">{i < 3 ? medals[i] : i + 1}</span>
-                <span className="flex-1 font-medium truncate">{entry.player.name}</span>
+                <span className="text-base w-5 shrink-0 text-center">{i < 3 ? medals[i] : i + 1}</span>
+                <span className="flex-1 font-medium truncate text-xs">{entry.player.name}</span>
                 {round.scoringSystem === 'stableford' ? (
-                  <span className="font-bold shrink-0" style={{ color: i === 0 ? '#f5c842' : '#fff' }}>
-                    {entry.stablefordPoints} <span className="text-xs font-normal" style={{ color: '#4a6450' }}>pt</span>
+                  <span className="font-bold text-xs shrink-0" style={{ color: i === 0 ? '#c9a227' : '#e4ebe4' }}>
+                    {entry.stablefordPoints} <span className="font-normal" style={{ color: '#4a664a' }}>pt</span>
                   </span>
                 ) : (
                   <div className="text-right shrink-0">
-                    <span className="font-bold" style={{ color: i === 0 ? '#f5c842' : '#fff' }}>{entry.totalStrokes}</span>
-                    <span className="text-xs ml-1" style={{
-                      color: entry.toPar < 0 ? '#60a5fa' : entry.toPar === 0 ? '#6a8870' : '#e8521a'
+                    <span className="font-bold text-xs" style={{ color: i === 0 ? '#c9a227' : '#e4ebe4' }}>{entry.totalStrokes}</span>
+                    <span className="text-[10px] ml-1" style={{
+                      color: entry.toPar < 0 ? '#60a5fa' : entry.toPar === 0 ? '#6a8e6a' : '#e8521a'
                     }}>
                       ({entry.toPar === 0 ? 'E' : entry.toPar > 0 ? `+${entry.toPar}` : entry.toPar})
                     </span>
                   </div>
                 )}
-                <span className="text-xs ml-1 shrink-0" style={{ color: '#4a6450' }}>{isExpanded ? '▲' : '▼'}</span>
+                <span className="text-[10px] shrink-0" style={{ color: '#4a664a' }}>{isExpanded ? '▲' : '▼'}</span>
               </button>
 
-              {/* Uitklapbare geschiedenis */}
               {isExpanded && (
-                <div className="mt-1 ml-8 rounded-xl overflow-hidden" style={{ border: '1px solid #243028' }}>
-                  <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide"
-                       style={{ background: '#2c4530', color: '#4a6450' }}>
-                    Vooruitgang op {round.courseName}
+                <div className="mt-1 ml-7 rounded-xl overflow-hidden" style={{ border: '1px solid #222e22' }}>
+                  <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide"
+                       style={{ background: '#1c2b1c', color: '#4a664a' }}>
+                    Vooruitgang · {round.courseName}
                   </div>
                   {history.map((h, idx) => {
                     const prev = idx > 0 ? history[idx - 1] : null;
@@ -275,31 +271,31 @@ function RoundCard({
                     return (
                       <div
                         key={h.roundId}
-                        className="flex items-center gap-2 px-3 py-2 text-sm"
+                        className="flex items-center gap-2 px-3 py-2 text-xs"
                         style={{
-                          background: isThisRound ? '#161d17' : '#1a2e1a',
-                          borderTop: idx > 0 ? '1px solid #1a2c1e' : undefined,
+                          background: isThisRound ? '#0d150d' : '#141f14',
+                          borderTop: idx > 0 ? '1px solid #1a2a1a' : undefined,
                         }}
                       >
-                        <span className="flex-1" style={{ color: isThisRound ? '#fff' : '#6a8870' }}>{d}</span>
+                        <span className="flex-1" style={{ color: isThisRound ? '#e4ebe4' : '#6a8e6a' }}>{d}</span>
                         {round.scoringSystem === 'stableford' ? (
-                          <span className="font-bold" style={{ color: isThisRound ? '#f5c842' : '#fff' }}>
+                          <span className="font-bold" style={{ color: isThisRound ? '#c9a227' : '#e4ebe4' }}>
                             {h.entry.stablefordPoints} pt
                           </span>
                         ) : (
-                          <span className="font-bold" style={{ color: isThisRound ? '#f5c842' : '#fff' }}>
+                          <span className="font-bold" style={{ color: isThisRound ? '#c9a227' : '#e4ebe4' }}>
                             {h.entry.totalStrokes}
-                            <span className="text-xs font-normal ml-1" style={{ color: '#4a6450' }}>
+                            <span className="text-[10px] font-normal ml-1" style={{ color: '#4a664a' }}>
                               ({h.entry.toPar === 0 ? 'E' : h.entry.toPar > 0 ? `+${h.entry.toPar}` : h.entry.toPar})
                             </span>
                           </span>
                         )}
                         {delta !== null && improved !== null && (
-                          <span className="text-xs font-semibold w-16 text-right" style={{ color: improved ? '#4ade80' : '#f87171' }}>
-                            {improved ? '▲' : '▼'} {Math.abs(delta)} {round.scoringSystem === 'stableford' ? 'pt' : 'slag'}
+                          <span className="text-[10px] font-semibold w-14 text-right" style={{ color: improved ? '#4ade80' : '#f87171' }}>
+                            {improved ? '▲' : '▼'} {Math.abs(delta)}
                           </span>
                         )}
-                        {delta === null && <span className="w-16" />}
+                        {delta === null && <span className="w-14" />}
                       </div>
                     );
                   })}

@@ -48,7 +48,6 @@ export default function AgendaPage() {
   const [loginError, setLoginError] = useState('');
   const [saveError, setSaveError] = useState('');
 
-  /* image crop state */
   const [rawImage, setRawImage] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -147,7 +146,6 @@ export default function AgendaPage() {
     <>
       <main className="flex flex-col min-h-screen gap-3 max-w-lg mx-auto w-full sm:max-w-xl">
 
-        {/* Logo */}
         <Link href="/" className="flex justify-center pt-4 px-4">
           <Image src="/logo-breed.png" alt="Willemien's Masters" width={600} height={180}
             className="h-auto drop-shadow-lg" style={{ width: '80%', maxWidth: '360px' }} priority />
@@ -161,27 +159,27 @@ export default function AgendaPage() {
               <>
                 <button onClick={openAdd}
                   className="flex items-center justify-center w-9 h-9 rounded-xl text-xl font-bold transition-colors"
-                  style={{ background: '#2e8c3e', color: '#fff' }} title="Toevoegen">＋</button>
+                  style={{ background: '#2a8c3a', color: '#fff' }} title="Toevoegen">＋</button>
                 <button onClick={logout}
                   className="flex items-center justify-center w-9 h-9 rounded-xl text-sm transition-colors"
-                  style={{ background: '#161d17', border: '1px solid #243028', color: '#6a8870' }} title="Uitloggen">🔓</button>
+                  style={{ background: '#141f14', border: '1px solid #263326', color: '#6a8e6a' }} title="Uitloggen">🔓</button>
               </>
             )}
             {!isAdmin && (
               <button onClick={() => setLoginModal(true)}
                 className="flex items-center justify-center w-9 h-9 rounded-xl text-sm transition-colors"
-                style={{ background: '#161d17', border: '1px solid #243028', color: '#6a8870' }} title="Inloggen">🔒</button>
+                style={{ background: '#141f14', border: '1px solid #263326', color: '#6a8e6a' }} title="Inloggen">🔒</button>
             )}
             <Link href="/"
               className="flex items-center justify-center w-9 h-9 rounded-xl text-base"
-              style={{ background: '#161d17', border: '1px solid #243028' }}>🏠</Link>
+              style={{ background: '#141f14', border: '1px solid #263326' }}>🏠</Link>
           </div>
         </div>
 
         {/* Kaarten */}
         <div className="px-4 flex flex-col gap-4 pb-4">
           {upcoming.length === 0 && past.length === 0 && (
-            <div className="text-center py-12" style={{ color: '#4a6450' }}>
+            <div className="text-center py-12" style={{ color: '#4a664a' }}>
               <p className="text-4xl mb-3">📅</p>
               <p className="text-sm">Nog geen activiteiten gepland.</p>
               {isAdmin && <p className="text-xs mt-1">Druk op ＋ om iets toe te voegen.</p>}
@@ -190,8 +188,8 @@ export default function AgendaPage() {
 
           {upcoming.length > 0 && (
             <>
-              <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#4a6450' }}>Aankomend</p>
-              <div className="grid grid-cols-3 gap-3">
+              <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8e6a' }}>Aankomend</p>
+              <div className="grid grid-cols-2 gap-3">
                 {upcoming.map((a) => <ActivityCard key={a.id} activity={a} isAdmin={isAdmin} onEdit={openEdit} onDelete={setDeleteId} />)}
               </div>
             </>
@@ -199,8 +197,8 @@ export default function AgendaPage() {
 
           {past.length > 0 && (
             <>
-              <p className="text-xs font-semibold uppercase tracking-wide mt-2" style={{ color: '#2a3a2e' }}>Geweest</p>
-              <div className="grid grid-cols-3 gap-3 opacity-50">
+              <p className="text-xs font-semibold uppercase tracking-wide mt-2" style={{ color: '#263326' }}>Geweest</p>
+              <div className="grid grid-cols-2 gap-3 opacity-40">
                 {past.map((a) => <ActivityCard key={a.id} activity={a} isAdmin={isAdmin} onEdit={openEdit} onDelete={setDeleteId} isPast />)}
               </div>
             </>
@@ -213,13 +211,13 @@ export default function AgendaPage() {
           {/* Login modal */}
           {loginModal && (
             <div className="fixed inset-0 z-[9999] flex items-center justify-center px-6"
-                 style={{ background: 'rgba(0,0,0,0.8)' }}
+                 style={{ background: 'rgba(0,0,0,0.85)' }}
                  onClick={(e) => e.target === e.currentTarget && setLoginModal(false)}>
               <div className="w-full max-w-xs rounded-2xl p-5 flex flex-col gap-4"
-                   style={{ background: '#131a14', border: '1px solid #243028' }}>
+                   style={{ background: '#0d150d', border: '1px solid #263326' }}>
                 <div className="flex items-center justify-between">
                   <h2 className="font-bold">Inloggen</h2>
-                  <button onClick={() => setLoginModal(false)} className="text-2xl" style={{ color: '#6a8870' }}>×</button>
+                  <button onClick={() => setLoginModal(false)} className="text-2xl" style={{ color: '#4a664a' }}>×</button>
                 </div>
                 <input className="input" placeholder="Gebruikersnaam" value={loginForm.user}
                   onChange={(e) => setLoginForm(f => ({ ...f, user: e.target.value }))} />
@@ -239,9 +237,9 @@ export default function AgendaPage() {
                 <Cropper image={rawImage} crop={crop} zoom={zoom} aspect={1}
                   onCropChange={setCrop} onZoomChange={setZoom} onCropComplete={onCropComplete} />
               </div>
-              <div className="p-4 flex flex-col gap-3" style={{ background: '#131a14' }}>
+              <div className="p-4 flex flex-col gap-3" style={{ background: '#0d150d' }}>
                 <div className="flex items-center gap-3">
-                  <span className="text-xs" style={{ color: '#6a8870' }}>Zoom</span>
+                  <span className="text-xs" style={{ color: '#6a8e6a' }}>Zoom</span>
                   <input type="range" min={1} max={3} step={0.05} value={zoom}
                     onChange={(e) => setZoom(Number(e.target.value))} className="flex-1" />
                 </div>
@@ -256,19 +254,19 @@ export default function AgendaPage() {
           {/* Toevoegen/bewerken modal */}
           {modal.open && (
             <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center px-4 pb-4"
-                 style={{ background: 'rgba(0,0,0,0.7)' }}
+                 style={{ background: 'rgba(0,0,0,0.8)' }}
                  onClick={(e) => e.target === e.currentTarget && closeModal()}>
               <div className="w-full max-w-xs rounded-2xl flex flex-col gap-3 p-4 max-h-[90vh] overflow-y-auto"
-                   style={{ background: '#131a14', border: '1px solid #243028' }}>
+                   style={{ background: '#0d150d', border: '1px solid #263326' }}>
                 <div className="flex items-center justify-between">
                   <h2 className="font-bold">{modal.editing ? 'Bewerken' : 'Toevoegen'}</h2>
-                  <button onClick={closeModal} className="text-2xl w-8 flex items-center justify-center" style={{ color: '#6a8870' }}>×</button>
+                  <button onClick={closeModal} className="text-2xl w-8 flex items-center justify-center" style={{ color: '#4a664a' }}>×</button>
                 </div>
 
                 {/* Afbeelding */}
                 <div className="flex flex-col gap-2">
-                  <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8870' }}>
-                    Afbeelding <span style={{ color: '#2a3a2e' }}>(optioneel)</span>
+                  <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8e6a' }}>
+                    Afbeelding <span style={{ color: '#222e22' }}>(optioneel)</span>
                   </label>
                   {finalImage ? (
                     <div className="relative w-full">
@@ -279,16 +277,16 @@ export default function AgendaPage() {
                       <div className="absolute top-2 right-2 flex gap-1">
                         <button onClick={() => fileRef.current?.click()}
                           className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
-                          style={{ background: '#2c4530', color: '#6a8870' }}>✏️</button>
+                          style={{ background: '#141f14', color: '#6a8e6a' }}>✏️</button>
                         <button onClick={() => { setFinalImage(null); setRawImage(null); }}
                           className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
-                          style={{ background: '#2c4530', color: '#e8521a' }}>🗑</button>
+                          style={{ background: '#141f14', color: '#e8521a' }}>🗑</button>
                       </div>
                     </div>
                   ) : (
                     <button onClick={() => fileRef.current?.click()}
                       className="w-full rounded-lg flex flex-col items-center justify-center gap-1.5 text-xs transition-colors py-6"
-                      style={{ background: '#2c4530', border: '2px dashed #243028', color: '#4a6450' }}>
+                      style={{ background: '#141f14', border: '2px dashed #263326', color: '#4a664a' }}>
                       <span className="text-2xl">📷</span>
                       <span>Foto kiezen</span>
                     </button>
@@ -297,22 +295,22 @@ export default function AgendaPage() {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8870' }}>Naam *</label>
+                  <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8e6a' }}>Naam *</label>
                   <input className="input" placeholder="bijv. Editie 2026" value={form.name}
                     onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))} />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8870' }}>Datum & tijd *</label>
+                  <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8e6a' }}>Datum & tijd *</label>
                   <input className="input" type="datetime-local" value={form.dateTime}
                     onChange={(e) => setForm(f => ({ ...f, dateTime: e.target.value }))} style={{ colorScheme: 'dark' }} />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8870' }}>📍 Locatie <span style={{ color: '#2a3a2e' }}>(optioneel)</span></label>
+                  <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8e6a' }}>📍 Locatie <span style={{ color: '#222e22' }}>(optioneel)</span></label>
                   <input className="input" placeholder="bijv. Oirschot" value={form.location}
                     onChange={(e) => setForm(f => ({ ...f, location: e.target.value }))} />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8870' }}>Omschrijving <span style={{ color: '#2a3a2e' }}>(optioneel)</span></label>
+                  <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6a8e6a' }}>Omschrijving <span style={{ color: '#222e22' }}>(optioneel)</span></label>
                   <textarea className="input resize-none" rows={2} placeholder="Korte omschrijving..."
                     value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} />
                 </div>
@@ -329,15 +327,15 @@ export default function AgendaPage() {
           {/* Verwijder bevestiging */}
           {deleteId && (
             <div className="fixed inset-0 z-[9999] flex items-center justify-center px-6"
-                 style={{ background: 'rgba(0,0,0,0.7)' }}>
+                 style={{ background: 'rgba(0,0,0,0.8)' }}>
               <div className="w-full max-w-xs rounded-2xl p-5 flex flex-col gap-4"
-                   style={{ background: '#131a14', border: '1px solid #7a2a1a' }}>
+                   style={{ background: '#0d150d', border: '1px solid #4a1a0a' }}>
                 <p className="text-sm text-center">Activiteit verwijderen?</p>
                 <div className="flex gap-3">
                   <button onClick={() => setDeleteId(null)} className="btn-secondary flex-1">Annuleren</button>
                   <button onClick={() => confirmDelete(deleteId)}
                     className="flex-1 rounded-xl py-3 text-sm font-semibold"
-                    style={{ background: '#7a2a1a', color: '#fff' }}>🗑 Verwijderen</button>
+                    style={{ background: '#5a1a0a', color: '#fff' }}>🗑 Verwijderen</button>
                 </div>
               </div>
             </div>
@@ -361,16 +359,15 @@ function ActivityCard({ activity, isAdmin, onEdit, onDelete, isPast = false }:
   const diff = activity.dateTime - Date.now();
   const days = Math.ceil(diff / 86400000);
   const countdown = !isPast && days >= 0
-    ? days === 0 ? 'Vandaag!' : days === 1 ? 'Morgen!' : `Over ${days} dagen`
+    ? days === 0 ? 'Vandaag!' : days === 1 ? 'Morgen!' : `Over ${days} d`
     : null;
-
-  const cardBg = isPast ? '#1a2e1a' : '#2a1f0a';
-  const cardBorder = isPast ? '#2a3a2a' : '#c87a00';
-  const accentColor = isPast ? '#4a6450' : '#f5c842';
 
   return (
     <div className="rounded-2xl overflow-hidden flex flex-col"
-         style={{ background: cardBg, border: `1px solid ${cardBorder}` }}>
+         style={{
+           background: isPast ? '#141f14' : '#1a1608',
+           border: `1px solid ${isPast ? '#222e22' : '#4a3808'}`,
+         }}>
 
       {/* Afbeelding */}
       {activity.image && (
@@ -381,38 +378,46 @@ function ActivityCard({ activity, isAdmin, onEdit, onDelete, isPast = false }:
             <div className="absolute top-1.5 right-1.5 flex gap-1">
               <button onClick={() => onEdit(activity)}
                 className="w-7 h-7 flex items-center justify-center rounded-lg text-xs"
-                style={{ background: 'rgba(0,0,0,0.6)', color: '#fff' }}>✏️</button>
+                style={{ background: 'rgba(0,0,0,0.7)', color: '#fff' }}>✏️</button>
               <button onClick={() => activity.id && onDelete(activity.id)}
                 className="w-7 h-7 flex items-center justify-center rounded-lg text-xs"
-                style={{ background: 'rgba(0,0,0,0.6)', color: '#e8521a' }}>🗑</button>
+                style={{ background: 'rgba(0,0,0,0.7)', color: '#e8521a' }}>🗑</button>
             </div>
           )}
         </div>
       )}
 
-      <div className="p-2 flex flex-col gap-1.5 flex-1">
-        {/* Datum centraal en breed */}
+      <div className="p-2.5 flex flex-col gap-1.5 flex-1">
+        {/* Countdown badge */}
+        {countdown && (
+          <div className="self-start px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide"
+               style={{ background: '#2a1e04', color: '#c9a227', border: '1px solid #4a3808' }}>
+            {countdown}
+          </div>
+        )}
+
+        {/* Datum */}
         <div className="relative text-center">
-          <span className="text-xl font-black leading-none" style={{ color: accentColor }}>{day} {month}</span>
+          <span className="text-lg font-black leading-none" style={{ color: isPast ? '#6a8e6a' : '#c9a227' }}>
+            {day} {month}
+          </span>
           {isAdmin && !activity.image && (
             <div className="absolute top-0 right-0 flex gap-1">
               <button onClick={() => onEdit(activity)}
                 className="w-6 h-6 flex items-center justify-center rounded text-xs"
-                style={{ background: '#2c4530', color: '#6a8870' }}>✏️</button>
+                style={{ background: '#141f14', color: '#6a8e6a' }}>✏️</button>
               <button onClick={() => activity.id && onDelete(activity.id)}
                 className="w-6 h-6 flex items-center justify-center rounded text-xs"
-                style={{ background: '#2c4530', color: '#e8521a' }}>🗑</button>
+                style={{ background: '#141f14', color: '#e8521a' }}>🗑</button>
             </div>
           )}
         </div>
 
-        {/* Onderwerp gecentreerd */}
         <p className="font-bold text-xs text-center">{activity.name}</p>
         {activity.description && (
-          <p className="text-[10px] text-center" style={{ color: '#6a8870' }}>{activity.description}</p>
+          <p className="text-[10px] text-center" style={{ color: '#6a8e6a' }}>{activity.description}</p>
         )}
-        {/* Plaats links, tijd rechts */}
-        <div className="flex items-center justify-between text-[10px]" style={{ color: '#4a6450' }}>
+        <div className="flex items-center justify-between text-[10px]" style={{ color: '#4a664a' }}>
           <div className="flex items-center gap-1">
             {activity.location && (
               <>

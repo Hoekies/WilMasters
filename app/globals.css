@@ -7,35 +7,35 @@
 @layer components {
   .input {
     @apply w-full rounded-xl px-4 py-3 text-sm transition-colors focus:outline-none;
-    background: #4a6e4a;
-    border: 1px solid #5a8a5a;
-    color: #f0f0f0;
+    background: #1c2b1c;
+    border: 1px solid #2e422e;
+    color: #e4ebe4;
   }
-  .input::placeholder { color: #a0c8a0; }
-  .input:focus { border-color: #6ab06a; box-shadow: 0 0 0 2px rgba(106,176,106,0.3); }
+  .input::placeholder { color: #4a664a; }
+  .input:focus { border-color: #2a8c3a; box-shadow: 0 0 0 2px rgba(42,140,58,0.2); }
 
-  select.input { color: #f0f0f0; }
-  select.input option { background: #4a6e4a; color: #f0f0f0; }
+  select.input { color: #e4ebe4; }
+  select.input option { background: #1c2b1c; color: #e4ebe4; }
 
   .btn-primary {
-    @apply w-full rounded-xl px-6 py-3.5 font-semibold text-white text-sm transition-colors shadow-lg;
-    background: #2e8c3e;
+    @apply w-full rounded-xl px-6 py-3.5 font-semibold text-white text-sm transition-all shadow-lg;
+    background: #2a8c3a;
   }
-  .btn-primary:hover { background: #37a349; }
-  .btn-primary:active { background: #236e30; }
+  .btn-primary:hover { background: #35a048; }
+  .btn-primary:active { filter: brightness(0.85); }
   .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .btn-secondary {
     @apply w-full rounded-xl px-6 py-3.5 font-medium text-sm transition-colors;
-    border: 1px solid #4a7050;
-    color: #a0c8a0;
+    border: 1px solid #2e422e;
+    color: #7a9c7a;
   }
-  .btn-secondary:hover { background: rgba(255,255,255,0.05); }
+  .btn-secondary:hover { background: rgba(255,255,255,0.04); }
   .btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .card {
     @apply rounded-2xl p-4;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: #141f14;
+    border: 1px solid #222e22;
   }
 }
