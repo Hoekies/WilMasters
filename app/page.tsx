@@ -36,7 +36,7 @@ export default function SplashPage() {
           src="/logo.png"
           alt="Willemien's Masters"
           width={200}
-          height={200}
+          height={174}
           priority
           className="drop-shadow-2xl"
         />

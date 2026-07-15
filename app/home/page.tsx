@@ -179,11 +179,11 @@ export default function HomePage() {
         <Image
           src="/logo-breed.png"
           alt="Willemien's Masters"
-          width={600}
-          height={180}
+          width={480}
+          height={418}
           priority
           className="drop-shadow-xl mb-3 h-auto"
-          style={{ width: '80%', maxWidth: '360px' }}
+          style={{ width: '38%', maxWidth: '150px' }}
         />
         <div className="flex gap-2 w-full mb-2">
           {/* Tabs */}
