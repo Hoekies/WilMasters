@@ -47,10 +47,10 @@ export default function HistoryPage() {
         <Image
           src="/logo-breed.png"
           alt="Willemien's Masters"
-          width={480}
-          height={418}
+          width={700}
+          height={242}
           className="h-auto drop-shadow-lg"
-          style={{ width: '38%', maxWidth: '150px' }}
+          style={{ width: '80%', maxWidth: '360px' }}
           priority
         />
       </Link>

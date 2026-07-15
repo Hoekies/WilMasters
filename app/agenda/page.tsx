@@ -147,8 +147,8 @@ export default function AgendaPage() {
       <main className="flex flex-col min-h-screen gap-3 max-w-lg mx-auto w-full sm:max-w-xl">
 
         <Link href="/" className="flex justify-center pt-4 px-4">
-          <Image src="/logo-breed.png" alt="Willemien's Masters" width={480} height={418}
-            className="h-auto drop-shadow-lg" style={{ width: '38%', maxWidth: '150px' }} priority />
+          <Image src="/logo-breed.png" alt="Willemien's Masters" width={700} height={242}
+            className="h-auto drop-shadow-lg" style={{ width: '80%', maxWidth: '360px' }} priority />
         </Link>
 
         {/* Header */}
